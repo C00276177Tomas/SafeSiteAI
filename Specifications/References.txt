@@ -1,0 +1,17 @@
+1. Fig 1. SETU LOGO: https://waterfordlibraries.ie/europe-direct-waterfords-repair-and-recycle-workshop/setu-logo-002/
+2. Fig 2. SiteSafe LOGO: https://www.canva.com/design/play?type=TAB7AVEOUWQ&category=tACZCvjI6mE&locale=en
+3. Fig 3. Python Logo: https://en.m.wikipedia.org/wiki/File:Python-logo-notext.svg
+4. Fig 4. + YOLO Docs: https://docs.ultralytics.com/
+5. Fig 5. OpenCV Logo: https://en.wikipedia.org/wiki/OpenCV
+6. Construction site high visibility jacket standards: https://www.hsa.ie/eng/publications_and_forms/publications/work_related_vehicles/high_visibility_clothing_for_use_around_moving_vehicles.pdf
+7. Fig 6. Flask Logo: https://en.wikipedia.org/wiki/Flask_%28web_framework%29
+8. Fig 7. React Logo: https://en.wikipedia.org/wiki/React_%28JavaScript_library%29
+9. Fig 9. SQL vs NoSQL: https://medium.com/nerd-for-tech/mysql-vs-nosql-b0838f6ae10
+10. Fig 8. email logo: https://imaginethatcreative.net/blog/understanding-the-importance-of-email-icons/
+11. R docs: https://www.r-project.org/
+12. RTDETR docs :https://docs.ultralytics.com/models/rtdetr/
+13. Darknet docs: https://pypi.org/project/darknetpy/
+14. PyTorch docs: https://pytorch.org/
+15. SMTP wiki: https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol
+16. Context Diagram Creately: https://app.creately.com/d/LaEOGiqZi7c/view
+17. img YOLO object detection example: https://pjreddie.com/darknet/yolo/
