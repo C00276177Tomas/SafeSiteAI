@@ -14,4 +14,4 @@
 14. PyTorch docs: https://pytorch.org/
 15. SMTP wiki: https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol
 16. Context Diagram Creately: https://app.creately.com/d/LaEOGiqZi7c/view
-17. img YOLO object detection example: https://pjreddie.com/darknet/yolo/
+17. Fig 10. img YOLO object detection example: https://pjreddie.com/darknet/yolo/
