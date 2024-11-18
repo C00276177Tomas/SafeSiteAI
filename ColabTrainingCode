@@ -1,0 +1,33 @@
+// import image dataset
+
+!pip install roboflow
+
+from roboflow import Roboflow
+rf = Roboflow(api_key="api-key")
+project = rf.workspace("sitesafeai").project("sitesafeaiv2")
+version = project.version(3)
+dataset = version.download("yolov11")
+
+// intall ultralytics
+
+!pip install ultralytics
+
+// train model on top of the standart yolo model
+
+from ultralytics import YOLO
+# Load a model
+model = YOLO("yolo11n.yaml")  # build a new model from YAML
+model = YOLO("yolo11n.pt")  # load a pretrained model (recommended for training)
+model = YOLO("yolo11n.yaml").load("yolo11n.pt")  # build from YAML and transfer weights
+results = model.train(data="/content/SiteSafeAIv2-3/data.yaml", epochs=50, imgsz=640)
+
+// Export zip file
+
+import shutil
+from google.colab import files
+folder_path = "/content/runs/detect/train"  # Example folder path
+zip_path = "/content/train3.zip"  # Destination for the zip file
+# Zip the folder
+shutil.make_archive(zip_path.replace(".zip", ""), 'zip', folder_path)
+# Download the zip file
+files.download(zip_path)
