@@ -16,10 +16,9 @@ dataset = version.download("yolov11")
 
 from ultralytics import YOLO
 # Load a model
-model = YOLO("yolo11n.yaml")  # build a new model from YAML
 model = YOLO("yolo11n.pt")  # load a pretrained model (recommended for training)
-model = YOLO("yolo11n.yaml").load("yolo11n.pt")  # build from YAML and transfer weights
-results = model.train(data="/content/SiteSafeAIv2-3/data.yaml", epochs=50, imgsz=640)
+# Train the model
+results = model.train(data="/content/SiteSafeAIv2-3/data.yaml", epochs=10, imgsz=640)
 
 // Export zip file
 
