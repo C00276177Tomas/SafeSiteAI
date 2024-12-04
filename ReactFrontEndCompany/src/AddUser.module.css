@@ -1,0 +1,83 @@
+.container {
+  text-align: center;
+  padding: 20px;
+  background-color: #e1f5fe; /* Light blue background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.box {
+  background-color: #ffffff; /* White background for the form box */
+  border: 1px solid #81d4fa; /* Soft blue border */
+  border-radius: 10px;
+  padding: 30px 50px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #0288d1; /* Deeper blue for the header */
+}
+
+.formGroup {
+  margin-bottom: 20px;
+  text-align: left; /* Align labels and inputs to the left */
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+  color: #0288d1; /* Match header color */
+  font-weight: bold;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #81d4fa;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: #ffffff; /* Set background to white for consistency */
+  transition: border-color 0.3s;
+}
+
+.formGroup input:focus {
+  border-color: #0288d1; /* Blue border when focused */
+  outline: none;
+}
+
+.formGroup .react-switch {
+  margin-top: 10px;
+  display: inline-block; /* Ensure the switch doesn't affect layout */
+}
+
+.button {
+  background-color: #0288d1; /* Blue button */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #0277bd; /* Slightly darker blue on hover */
+}
+
+.link {
+  margin-top: 20px;
+}
+
+.link a {
+  text-decoration: none;
+  color: #0288d1;
+  font-weight: bold;
+}
+
+.link a:hover {
+  text-decoration: underline;
+}
