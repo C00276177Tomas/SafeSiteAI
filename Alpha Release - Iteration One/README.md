@@ -25,12 +25,15 @@ Python 3.8 or newer
 Required libraries: ultralytics, opencv-python
 
 📽️ Demo
-The folder contains videos of demo's of different detection distances and lighting. It identifying workers with and without proper safety equipment.
+
+The Demo files 1-4 contain mp4 videos of demo's of different detection distances and lighting. It identifying workers with and without proper safety equipment. Please download and watch.
 
 🐞 Reporting Bugs & Feedback
+
 Since this is an alpha release, your feedback is invaluable! Please report any issues or suggestions to email C00276177@setu.ie.
 
 📜 License
+
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 Thank you for trying out the alpha version of AI Construction Site Monitoring! Your feedback will help us build a safer and smarter construction environment. 😊
