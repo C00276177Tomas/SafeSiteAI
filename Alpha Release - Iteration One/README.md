@@ -26,7 +26,7 @@ Required libraries: ultralytics, opencv-python
 
 📽️ Demo
 
-The Demo files 1-4 contain mp4 videos of demo's of different detection distances and lighting. It identifying workers with and without proper safety equipment. Please download and watch.
+The Demo Folder contains 3 videos of demo's of different detection distances and lighting. It identifying workers with and without proper safety equipment. Please download and watch.
 
 🐞 Reporting Bugs & Feedback
 
