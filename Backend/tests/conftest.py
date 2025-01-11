@@ -69,6 +69,28 @@ def client():
         yield client
 
         with app.app_context():
+            print("\n--- Tables Content After Test ---")
+
+            print("\nCompany Table:")
+            for comp in Company.query.all():
+                print(f"ID: {comp.company_id}, Name: {comp.company_name}, Created At: {comp.created_at}")
+
+            print("\nSettings Table:")
+            for sett in Settings.query.all():
+                print(f"ID: {sett.settings_id}, Company ID: {sett.company_id}, Confidence Threshold: {sett.confidence_threshold}, Email: {sett.notification_email}")
+
+            print("\nUsers Table:")
+            for usr in Users.query.all():
+                print(f"ID: {usr.user_id}, Company ID: {usr.company_id}, Name: {usr.first_name} {usr.last_name}, Email: {usr.email}")
+
+            print("\nCamera Table:")
+            for cam in Camera.query.all():
+                print(f"ID: {cam.camera_id}, Company ID: {cam.company_id}, Name: {cam.camera_name}, Location: {cam.location}")
+
+            print("\nDetection Table:")
+            for det in Detection.query.all():
+                print(f"ID: {det.detection_id}, Camera ID: {det.camera_id}, User ID: {det.user_id}, Type: {det.detection_type}, Confidence: {det.confidence}")
+                
             db.drop_all()
             print("Database URI during tests:", app.config['SQLALCHEMY_DATABASE_URI'])
 

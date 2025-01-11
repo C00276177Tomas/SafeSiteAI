@@ -1,3 +1,7 @@
+from models import Company
+
+# User Tests
+
 # Get users tests
 def test_get_users(client):
     response = client.get('/get_users')
@@ -125,3 +129,61 @@ def test_delete_user_not_found(client):
     response = client.delete('/delete_user/9999')
     assert response.status_code == 404
     assert "User not found" in response.json['error']
+    
+# Company Tests
+
+# Get companies tests
+def test_get_companies(client):
+    response = client.get('/get_companies')
+    assert response.status_code == 200
+    assert 'companies' in response.json
+    assert isinstance(response.json['companies'], list)
+
+# Add company tests
+def test_add_company(client):
+    new_company = {
+        "company_name": "New Company"
+    }
+    response = client.post('/add_company', json=new_company)
+    assert response.status_code == 201
+    assert response.json['message'] == "Company created successfully"
+
+def test_add_company_missing_fields(client):
+    response = client.post('/add_company', json={})
+    assert response.status_code == 400
+    assert "Missing required fields" in response.json['error']
+
+# Update company tests
+def test_update_company(client):
+    with client.application.app_context():  # Ensure application context is available
+        company = Company.query.first()  # Accessing the database with the app context
+        updated_data = {
+            "company_name": "Updated Company Name"
+        }
+        response = client.put(f'/update_company/{company.company_id}', json=updated_data)
+        assert response.status_code == 200
+        assert response.json['message'] == "Company updated successfully"
+
+def test_update_company_not_found(client):
+    response = client.put('/update_company/9999', json={"company_name": "Updated Company"})
+    assert response.status_code == 404
+    assert "Company not found" in response.json['error']
+
+# Delete company tests
+def test_delete_company(client):
+    # Add a company
+    new_company = {
+        "company_name": "Test Company for Deletion"
+    }
+    response = client.post('/add_company', json=new_company)
+    company_id = response.json['company_id']
+
+    # Delete the company
+    response = client.delete(f'/delete_company/{company_id}')
+    assert response.status_code == 200
+    assert response.json['message'] == "Company deleted successfully"
+
+def test_delete_company_not_found(client):
+    response = client.delete('/delete_company/9999')
+    assert response.status_code == 404
+    assert "Company not found" in response.json['error']
