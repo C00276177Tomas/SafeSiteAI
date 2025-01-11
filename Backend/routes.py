@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify, request
-from models import Users, db  # Import the Users model and database instance
+from models import Users, Company, db  # Import the Users model and database instance
 from sqlalchemy.exc import IntegrityError
 
 # Create a Blueprint for the routes
 routes_bp = Blueprint('routes', __name__)
+
+# Users Routes
 
 # Route to get all users
 @routes_bp.route('/get_users', methods=['GET'])
@@ -119,6 +121,98 @@ def delete_user(user_id):
         return jsonify({"message": "User deleted successfully", "user_id": user_id}), 200
     except Exception as e:
         db.session.rollback()  # Rollback in case of an error
+        return jsonify({"error": str(e)}), 500
+    
+# Company Routes
+
+# Route to get all companies
+@routes_bp.route('/get_companies', methods=['GET'])
+def get_companies():
+    all_companies = Company.query.all()
+    company_list = [
+        {
+            "company_id": company.company_id,
+            "company_name": company.company_name,
+            "created_at": company.created_at.strftime('%Y-%m-%d %H:%M:%S') if company.created_at else None,
+            "settings": {
+                "settings_id": company.settings.settings_id if company.settings else None,
+            },
+            "users": [{"user_id": user.user_id, "first_name": user.first_name, "last_name": user.last_name} for user in company.users],
+            "cameras": [{"camera_id": camera.camera_id, "camera_name": camera.camera_name} for camera in company.cameras]
+        }
+        for company in all_companies
+    ]
+    return jsonify({"companies": company_list})
+
+# Route to add a new company
+@routes_bp.route('/add_company', methods=['POST'])
+def add_company():
+    try:
+        data = request.get_json()
+
+        if 'company_name' not in data:
+            return jsonify({"error": "Missing required fields"}), 400
+
+        existing_company = Company.query.filter_by(company_name=data['company_name']).first()
+        if existing_company:
+            return jsonify({"error": "Company name already exists"}), 400
+
+        new_company = Company(
+            company_name=data['company_name'],
+        )
+
+        db.session.add(new_company)
+        db.session.commit()
+
+        return jsonify({"message": "Company created successfully", "company_id": new_company.company_id}), 201
+
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Duplicate company name"}), 400
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+# Route to update company details
+@routes_bp.route('/update_company/<int:company_id>', methods=['PUT'])
+def update_company(company_id):
+    try:
+        company = Company.query.get(company_id)
+        if not company:
+            return jsonify({"error": "Company not found"}), 404
+
+        data = request.get_json()
+
+        if 'company_name' in data:
+            company.company_name = data['company_name']
+
+        db.session.commit()
+
+        return jsonify({"message": "Company updated successfully", "company_id": company.company_id}), 200
+
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Duplicate company name"}), 400
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+# Route to delete a company
+@routes_bp.route('/delete_company/<int:company_id>', methods=['DELETE'])
+def delete_company(company_id):
+    try:
+        company = Company.query.get(company_id)
+        if not company:
+            return jsonify({"error": "Company not found"}), 404
+
+        db.session.delete(company)
+        db.session.commit()
+
+        return jsonify({"message": "Company deleted successfully", "company_id": company_id}), 200
+    except Exception as e:
+        db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
 # Route to the root URL (/)
