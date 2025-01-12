@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import Users, Company, db  # Import the Users model and database instance
+from models import Users, Company, Camera, db  # Import the Users model and database instance
 from sqlalchemy.exc import IntegrityError
 
 # Create a Blueprint for the routes
@@ -211,6 +211,95 @@ def delete_company(company_id):
         db.session.commit()
 
         return jsonify({"message": "Company deleted successfully", "company_id": company_id}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+# Camera Routes
+
+# Route to get all cameras
+@routes_bp.route('/get_cameras', methods=['GET'])
+def get_cameras():
+    all_cameras = Camera.query.all()
+    camera_list = [
+        {
+            "camera_id": camera.camera_id,
+            "camera_name": camera.camera_name,
+            "location": camera.location,
+            "company_id": camera.company_id
+        }
+        for camera in all_cameras
+    ]
+    return jsonify({"cameras": camera_list})
+
+# Route to add a new camera
+@routes_bp.route('/add_camera', methods=['POST'])
+def add_camera():
+    try:
+        data = request.get_json()
+
+        if 'camera_name' not in data or 'company_id' not in data:
+            return jsonify({"error": "Missing required fields"}), 400
+
+        company = Company.query.get(data['company_id'])
+        if not company:
+            return jsonify({"error": "Company not found"}), 404
+
+        new_camera = Camera(
+            camera_name=data['camera_name'],
+            location=data.get('location'),  # Optional field
+            company_id=data['company_id']
+        )
+
+        db.session.add(new_camera)
+        db.session.commit()
+
+        return jsonify({"message": "Camera created successfully", "camera_id": new_camera.camera_id}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+# Route to update camera details
+@routes_bp.route('/update_camera/<int:camera_id>', methods=['PUT'])
+def update_camera(camera_id):
+    try:
+        camera = Camera.query.get(camera_id)
+        if not camera:
+            return jsonify({"error": "Camera not found"}), 404
+
+        data = request.get_json()
+
+        if 'camera_name' in data:
+            camera.camera_name = data['camera_name']
+        if 'location' in data:
+            camera.location = data['location']
+        if 'company_id' in data:
+            company = Company.query.get(data['company_id'])
+            if not company:
+                return jsonify({"error": "Company not found"}), 404
+            camera.company_id = data['company_id']
+
+        db.session.commit()
+
+        return jsonify({"message": "Camera updated successfully", "camera_id": camera.camera_id}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+# Route to delete a camera
+@routes_bp.route('/delete_camera/<int:camera_id>', methods=['DELETE'])
+def delete_camera(camera_id):
+    try:
+        camera = Camera.query.get(camera_id)
+        if not camera:
+            return jsonify({"error": "Camera not found"}), 404
+
+        db.session.delete(camera)
+        db.session.commit()
+
+        return jsonify({"message": "Camera deleted successfully", "camera_id": camera_id}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
