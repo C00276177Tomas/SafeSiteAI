@@ -332,7 +332,7 @@ def add_settings():
         data = request.get_json()
 
         if 'company_id' not in data:
-            return jsonify({"error": "Missing required field: company_id"}), 400
+            return jsonify({"error": "Missing required fields"}), 400
 
         company = Company.query.get(data['company_id'])
         if not company:

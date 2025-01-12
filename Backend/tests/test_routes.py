@@ -1,4 +1,4 @@
-from models import Company, Camera
+from models import Company, Camera, Settings
 
 # User Tests
 
@@ -243,6 +243,79 @@ def test_delete_camera(client):
     response = client.delete(f'/delete_camera/{camera_id}')
     assert response.status_code == 200
     assert response.json['message'] == "Camera deleted successfully"
+    
+# Settings tests
+
+# Get settings tests
+def test_get_settings(client):
+    response = client.get('/get_settings')
+    assert response.status_code == 200
+    assert 'settings' in response.json
+    assert isinstance(response.json['settings'], list)
+    
+# Add settings tests
+def test_add_settings(client):
+    new_settings = {
+        "company_id": 1,
+        "confidence_threshold": 0.8,
+        "onoff_email": True,
+        "onoff_sms": False,
+        "notification_email": "notify@company.com",
+        "notification_sms": "+1234567890"
+    }
+    response = client.post('/add_settings', json=new_settings)
+    assert response.status_code == 201
+    assert response.json['message'] == "Settings created successfully"
+
+def test_add_settings_missing_fields(client):
+    response = client.post('/add_settings', json={})
+    assert response.status_code == 400
+    assert "Missing required fields" in response.json['error']
+
+# Update settings tests
+def test_update_settings(client):
+    with client.application.app_context():
+        settings = Settings.query.first()  # Accessing the database to get settings
+        updated_data = {
+            "confidence_threshold": 0.85,
+            "onoff_email": False,
+            "onoff_sms": True,
+            "notification_email": "new_notify@company.com",
+            "notification_sms": "+0987654321"
+        }
+        response = client.put(f'/update_settings/{settings.settings_id}', json=updated_data)
+        assert response.status_code == 200
+        assert response.json['message'] == "Settings updated successfully"
+
+def test_update_settings_not_found(client):
+    response = client.put('/update_settings/9999', json={
+        "confidence_threshold": 0.9,
+        "onoff_email": True,
+        "onoff_sms": True,
+        "notification_email": "nonexistent@company.com",
+        "notification_sms": "+1112223333"
+    })
+    assert response.status_code == 404
+    assert "Settings not found" in response.json['error']
+    
+# Delete settings tests
+def test_delete_settings(client):
+    # Add settings for a company
+    new_settings = {
+        "company_id": 1,
+        "confidence_threshold": 0.8,
+        "onoff_email": True,
+        "onoff_sms": False,
+        "notification_email": "notify@company.com",
+        "notification_sms": "+1234567890"
+    }
+    response = client.post('/add_settings', json=new_settings)
+    settings_id = response.json['settings_id']
+
+    # Delete the settings
+    response = client.delete(f'/delete_settings/{settings_id}')
+    assert response.status_code == 200
+    assert response.json['message'] == "Settings deleted successfully"
 
 def test_delete_company_not_found(client):
     response = client.delete('/delete_company/9999')
