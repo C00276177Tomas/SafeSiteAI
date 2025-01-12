@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import Users, Company, Camera, db  # Import the Users model and database instance
+from models import Users, Company, Camera,Settings, db  # Import the Users model and database instance
 from sqlalchemy.exc import IntegrityError
 
 # Create a Blueprint for the routes
@@ -300,6 +300,108 @@ def delete_camera(camera_id):
         db.session.commit()
 
         return jsonify({"message": "Camera deleted successfully", "camera_id": camera_id}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+# Settings Routes
+
+# Route to get all settings
+@routes_bp.route('/get_settings', methods=['GET'])
+def get_settings():
+    all_settings = Settings.query.all()
+    settings_list = [
+        {
+            "settings_id": setting.settings_id,
+            "company_id": setting.company_id,
+            "confidence_threshold": setting.confidence_threshold,
+            "onoff_email": setting.onoff_email,
+            "onoff_sms": setting.onoff_sms,
+            "notification_email": setting.notification_email,
+            "notification_sms": setting.notification_sms,
+            "updated_at": setting.updated_at
+        }
+        for setting in all_settings
+    ]
+    return jsonify({"settings": settings_list})
+
+# Route to add new settings
+@routes_bp.route('/add_settings', methods=['POST'])
+def add_settings():
+    try:
+        data = request.get_json()
+
+        if 'company_id' not in data:
+            return jsonify({"error": "Missing required field: company_id"}), 400
+
+        company = Company.query.get(data['company_id'])
+        if not company:
+            return jsonify({"error": "Company not found"}), 404
+
+        existing_settings = Settings.query.filter_by(company_id=data['company_id']).first()
+        if existing_settings:
+            return jsonify({"error": "Settings for this company already exist"}), 400
+
+        new_settings = Settings(
+            company_id=data['company_id'],
+            confidence_threshold=data.get('confidence_threshold'),
+            onoff_email=data.get('onoff_email', False),
+            onoff_sms=data.get('onoff_sms', False),
+            notification_email=data.get('notification_email'),
+            notification_sms=data.get('notification_sms')
+        )
+
+        db.session.add(new_settings)
+        db.session.commit()
+
+        return jsonify({"message": "Settings created successfully", "settings_id": new_settings.settings_id}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+# Route to update settings
+@routes_bp.route('/update_settings/<int:settings_id>', methods=['PUT'])
+def update_settings(settings_id):
+    try:
+        settings = Settings.query.get(settings_id)
+        if not settings:
+            return jsonify({"error": "Settings not found"}), 404
+
+        data = request.get_json()
+
+        if 'confidence_threshold' in data:
+            settings.confidence_threshold = data['confidence_threshold']
+        if 'onoff_email' in data:
+            settings.onoff_email = data['onoff_email']
+        if 'onoff_sms' in data:
+            settings.onoff_sms = data['onoff_sms']
+        if 'notification_email' in data:
+            settings.notification_email = data['notification_email']
+        if 'notification_sms' in data:
+            settings.notification_sms = data['notification_sms']
+
+        db.session.commit()
+
+        return jsonify({"message": "Settings updated successfully", "settings_id": settings.settings_id}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+# Route to delete settings
+@routes_bp.route('/delete_settings/<int:settings_id>', methods=['DELETE'])
+def delete_settings(settings_id):
+    try:
+        settings = Settings.query.get(settings_id)
+        if not settings:
+            return jsonify({"error": "Settings not found"}), 404
+
+        db.session.delete(settings)
+        db.session.commit()
+
+        return jsonify({"message": "Settings deleted successfully", "settings_id": settings_id}), 200
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
