@@ -1,4 +1,4 @@
-from models import Company
+from models import Company, Camera
 
 # User Tests
 
@@ -182,6 +182,67 @@ def test_delete_company(client):
     response = client.delete(f'/delete_company/{company_id}')
     assert response.status_code == 200
     assert response.json['message'] == "Company deleted successfully"
+    
+# Camera Tests
+
+# Get cameras tests
+def test_get_cameras(client):
+    response = client.get('/get_cameras')
+    assert response.status_code == 200
+    assert 'cameras' in response.json
+    assert isinstance(response.json['cameras'], list)
+
+# Add camera tests
+def test_add_camera(client):
+    new_camera = {
+        "company_id": 1,
+        "camera_name": "New Camera",
+        "location": "Building A, Floor 3"
+    }
+    response = client.post('/add_camera', json=new_camera)
+    assert response.status_code == 201
+    assert response.json['message'] == "Camera created successfully"
+
+def test_add_camera_missing_fields(client):
+    response = client.post('/add_camera', json={})
+    assert response.status_code == 400
+    assert "Missing required fields" in response.json['error']
+
+# Update camera tests
+def test_update_camera(client):
+    with client.application.app_context():  # Ensure application context is available
+        camera = Camera.query.first()  # Accessing the database with the app context
+        updated_data = {
+            "camera_name": "Updated Camera Name",
+            "location": "Updated Location, Floor 5"
+        }
+        response = client.put(f'/update_camera/{camera.camera_id}', json=updated_data)
+        assert response.status_code == 200
+        assert response.json['message'] == "Camera updated successfully"
+
+def test_update_camera_not_found(client):
+    response = client.put('/update_camera/9999', json={
+        "camera_name": "Nonexistent Camera",
+        "location": "Unknown Location"
+    })
+    assert response.status_code == 404
+    assert "Camera not found" in response.json['error']
+
+# Delete camera tests
+def test_delete_camera(client):
+    # Add a camera
+    new_camera = {
+        "company_id": 1,
+        "camera_name": "Test Camera for Deletion",
+        "location": "Temporary Location"
+    }
+    response = client.post('/add_camera', json=new_camera)
+    camera_id = response.json['camera_id']
+
+    # Delete the camera
+    response = client.delete(f'/delete_camera/{camera_id}')
+    assert response.status_code == 200
+    assert response.json['message'] == "Camera deleted successfully"
 
 def test_delete_company_not_found(client):
     response = client.delete('/delete_company/9999')
