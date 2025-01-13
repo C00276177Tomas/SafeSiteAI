@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import Users, Company, Camera,Settings, db  # Import the Users model and database instance
+from models import Users, Company, Camera, Settings, Detection, db  # Import the Users model and database instance
 from sqlalchemy.exc import IntegrityError
 
 # Create a Blueprint for the routes
@@ -401,6 +401,120 @@ def delete_settings(settings_id):
         db.session.commit()
 
         return jsonify({"message": "Settings deleted successfully", "settings_id": settings_id}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+# Detection Routes
+
+# Route to get all detections
+@routes_bp.route('/get_detections', methods=['GET'])
+def get_detections():
+    all_detections = Detection.query.all()
+    detections_list = [
+        {
+            "detection_id": detection.detection_id,
+            "camera_id": detection.camera_id,
+            "user_id": detection.user_id,
+            "detection_type": detection.detection_type,
+            "detection_datetime": detection.detection_datetime,
+            "confidence": detection.confidence,
+            "image_data": detection.image_data.hex() if detection.image_data else None  # Convert binary to hex string
+        }
+        for detection in all_detections
+    ]
+    return jsonify({"detections": detections_list})
+
+
+# Route to add a new detection
+@routes_bp.route('/add_detection', methods=['POST'])
+def add_detection():
+    try:
+        data = request.get_json()
+
+        if 'camera_id' not in data or 'user_id' not in data:
+            return jsonify({"error": "Missing required fields"}), 400
+
+        camera = Camera.query.get(data['camera_id'])
+        user = Users.query.get(data['user_id'])
+
+        if not camera:
+            return jsonify({"error": "Camera not found"}), 404
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        new_detection = Detection(
+            camera_id=data['camera_id'],
+            user_id=data['user_id'],
+            detection_type=data.get('detection_type'),
+            detection_datetime=data.get('detection_datetime', db.func.current_timestamp()),
+            confidence=data.get('confidence'),
+            image_data=bytes.fromhex(data['image_data']) if 'image_data' in data else None
+        )
+
+        db.session.add(new_detection)
+        db.session.commit()
+
+        return jsonify({"message": "Detection created successfully", "detection_id": new_detection.detection_id}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+# Route to update detection details
+@routes_bp.route('/update_detection/<int:detection_id>', methods=['PUT'])
+def update_detection(detection_id):
+    try:
+        detection = Detection.query.get(detection_id)
+        if not detection:
+            return jsonify({"error": "Detection not found"}), 404
+
+        data = request.get_json()
+
+        if 'camera_id' in data:
+            camera = Camera.query.get(data['camera_id'])
+            if not camera:
+                return jsonify({"error": "Camera not found"}), 404
+            detection.camera_id = data['camera_id']
+
+        if 'user_id' in data:
+            user = Users.query.get(data['user_id'])
+            if not user:
+                return jsonify({"error": "User not found"}), 404
+            detection.user_id = data['user_id']
+
+        if 'detection_type' in data:
+            detection.detection_type = data['detection_type']
+        if 'detection_datetime' in data:
+            detection.detection_datetime = data['detection_datetime']
+        if 'confidence' in data:
+            detection.confidence = data['confidence']
+        if 'image_data' in data:
+            detection.image_data = bytes.fromhex(data['image_data'])
+
+        db.session.commit()
+
+        return jsonify({"message": "Detection updated successfully", "detection_id": detection.detection_id}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+# Route to delete a detection
+@routes_bp.route('/delete_detection/<int:detection_id>', methods=['DELETE'])
+def delete_detection(detection_id):
+    try:
+        detection = Detection.query.get(detection_id)
+        if not detection:
+            return jsonify({"error": "Detection not found"}), 404
+
+        db.session.delete(detection)
+        db.session.commit()
+
+        return jsonify({"message": "Detection deleted successfully", "detection_id": detection_id}), 200
 
     except Exception as e:
         db.session.rollback()

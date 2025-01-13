@@ -1,4 +1,4 @@
-from models import Company, Camera, Settings
+from models import Company, Camera, Settings, Detection
 
 # User Tests
 
@@ -332,6 +332,134 @@ def test_delete_settings(client):
     response = client.delete(f'/delete_settings/{settings_id}')
     assert response.status_code == 200
     assert response.json['message'] == "Settings deleted successfully"
+    
+# Detection tests
+
+# Get detections tests
+def test_get_detections(client):
+    response = client.get('/get_detections')
+    assert response.status_code == 200
+    assert 'detections' in response.json
+    assert isinstance(response.json['detections'], list)
+
+# Add detection tests (and create necessary dependencies first)
+def test_add_detection(client):
+    # Step 1: Create a new company
+    new_company = {"company_name": "New Company for Detection"}
+    company_response = client.post('/add_company', json=new_company)
+    assert company_response.status_code == 201
+    company_id = company_response.json['company_id']
+
+    # Step 2: Create a new camera for the company
+    new_camera = {
+        "company_id": company_id,
+        "camera_name": "Test Camera",
+        "location": "Building A, Floor 1"
+    }
+    camera_response = client.post('/add_camera', json=new_camera)
+    assert camera_response.status_code == 201
+    camera_id = camera_response.json['camera_id']
+
+    # Step 3: Create a new user
+    new_user = {
+        
+        "company_id": company_id,
+        "first_name": "Jane",
+        "last_name": "Doe",
+        "email": "jane.doe@example.com",
+        "role": "normal",
+        "password_hash": "hashed_password"
+    }
+    user_response = client.post('/add_user', json=new_user)
+    assert user_response.status_code == 201
+    user_id = user_response.json['user_id']
+
+    # Step 4: Add a new detection
+    new_detection = {
+        "camera_id": camera_id,
+        "user_id": user_id,
+        "detection_type": "Person",
+        "confidence": 0.92,
+        "image_data": "ffd8ffe000104a46494600010101006000600000"
+    }
+    response = client.post('/add_detection', json=new_detection)
+    assert response.status_code == 201
+    assert response.json['message'] == "Detection created successfully"
+
+def test_add_detection_missing_fields(client):
+    response = client.post('/add_detection', json={})
+    assert response.status_code == 400
+    assert "Missing required fields" in response.json['error']
+
+# Update detection tests
+def test_update_detection(client):
+    with client.application.app_context():
+        detection = Detection.query.first()  # Accessing the database to get a detection
+        updated_data = {
+            "detection_type": "Vehicle",
+            "confidence": 0.85,
+            "image_data": "ffd8ffe000104a46494600010101006000600000"
+        }
+        response = client.put(f'/update_detection/{detection.detection_id}', json=updated_data)
+        assert response.status_code == 200
+        assert response.json['message'] == "Detection updated successfully"
+
+def test_update_detection_not_found(client):
+    response = client.put('/update_detection/9999', json={
+        "detection_type": "Nonexistent Type",
+        "confidence": 0.5,
+        "image_data": "0000000000000000"
+    })
+    assert response.status_code == 404
+    assert "Detection not found" in response.json['error']
+
+# Delete detection tests
+def test_delete_detection(client):
+    # Step 1: Create a new company
+    new_company = {"company_name": "New Company for Deletion"}
+    company_response = client.post('/add_company', json=new_company)
+    assert company_response.status_code == 201
+    company_id = company_response.json['company_id']
+
+    # Step 2: Create a new camera
+    new_camera = {
+        "company_id": company_id,
+        "camera_name": "Test Camera",
+        "location": "Building B, Floor 2"
+    }
+    camera_response = client.post('/add_camera', json=new_camera)
+    assert camera_response.status_code == 201
+    camera_id = camera_response.json['camera_id']
+
+    # Step 3: Create a new user
+    new_user = {
+        "company_id": company_id,
+        "first_name": "JaneDetection",
+        "last_name": "Doe",
+        "email": "DetectionTest@example.com",
+        "role": "normal",
+        "password_hash": "hashed_password"
+    }
+    user_response = client.post('/add_user', json=new_user)
+    assert user_response.status_code == 201
+    user_id = user_response.json['user_id']
+
+    # Step 4: Add a new detection
+    new_detection = {
+        "camera_id": camera_id,
+        "user_id": user_id,
+        "detection_type": "Person",
+        "confidence": 0.95,
+        "image_data": "ffd8ffe000104a46494600010101006000600000"
+    }
+    detection_response = client.post('/add_detection', json=new_detection)
+    detection_id = detection_response.json['detection_id']
+
+    # Step 5: Delete the detection
+    response = client.delete(f'/delete_detection/{detection_id}')
+    assert response.status_code == 200
+    assert response.json['message'] == "Detection deleted successfully"
+
 
 def test_delete_company_not_found(client):
     response = client.delete('/delete_company/9999')
