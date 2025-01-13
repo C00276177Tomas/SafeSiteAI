@@ -253,10 +253,19 @@ def test_get_settings(client):
     assert 'settings' in response.json
     assert isinstance(response.json['settings'], list)
     
-# Add settings tests
+# Add settings tests (and create a company first)
 def test_add_settings(client):
+    # Step 1: Create a new company
+    new_company = {
+        "company_name": "New Company for Settings"
+    }
+    response = client.post('/add_company', json=new_company)
+    assert response.status_code == 201
+    company_id = response.json['company_id']  # Get the ID of the newly created company
+
+    # Step 2: Add settings for the created company
     new_settings = {
-        "company_id": 1,
+        "company_id": company_id,
         "confidence_threshold": 0.8,
         "onoff_email": True,
         "onoff_sms": False,
@@ -300,9 +309,16 @@ def test_update_settings_not_found(client):
     
 # Delete settings tests
 def test_delete_settings(client):
+		# Step 1: Create a new company
+    new_company = {
+        "company_name": "New Company for Settings"
+    }
+    response = client.post('/add_company', json=new_company)
+    assert response.status_code == 201
+    company_id = response.json['company_id']  # Get the ID of the newly created company
     # Add settings for a company
     new_settings = {
-        "company_id": 1,
+        "company_id": company_id,
         "confidence_threshold": 0.8,
         "onoff_email": True,
         "onoff_sms": False,
