@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from models import Users, Company, Camera, Settings, Detection, db  # Import the Users model and database instance
 from sqlalchemy.exc import IntegrityError
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Create a Blueprint for the routes
 routes_bp = Blueprint('routes', __name__)
@@ -22,6 +23,7 @@ def get_users():
             "password_hash": user.password_hash,
             "created_at": user.created_at.strftime('%Y-%m-%d %H:%M:%S') if user.created_at else None,
             "updated_at": user.updated_at.strftime('%Y-%m-%d %H:%M:%S') if user.updated_at else None,
+            "is_active": user.is_active,
             "company": {
                 "company_id": user.company.company_id,
                 "company_name": user.company.company_name,
@@ -46,13 +48,16 @@ def add_user():
         if existing_user:
             return jsonify({"error": "Email already exists"}), 400
 
+        # Hash the password
+        hashed_password = generate_password_hash(data['password_hash'], method='pbkdf2:sha256', salt_length=12)
+
         # Create new user
         new_user = Users(
             company_id=data['company_id'],
             first_name=data['first_name'],
             last_name=data['last_name'],
             email=data['email'],
-            password_hash=data['password_hash'],
+            password_hash=hashed_password,  # Use the hashed password here
             role=data.get('role', 'normal')  # Default to 'normal' if no role is provided
         )
 
@@ -62,7 +67,7 @@ def add_user():
 
         return jsonify({"message": "User created successfully", "user_id": new_user.user_id}), 201
 
-    except IntegrityError as e:
+    except IntegrityError:
         db.session.rollback()  # Rollback in case of error
         return jsonify({"error": "Duplicate email address"}), 400  # Handle unique constraint error
 
@@ -114,11 +119,55 @@ def delete_user(user_id):
         if not user:
             return jsonify({"error": "User not found"}), 404
 
-        # Delete the user
+        # Delete the user from the database
         db.session.delete(user)
         db.session.commit()
 
         return jsonify({"message": "User deleted successfully", "user_id": user_id}), 200
+    except Exception as e:
+        db.session.rollback()  # Rollback in case of an error
+        return jsonify({"error": str(e)}), 500
+    
+# Route to make a user inactive
+@routes_bp.route('/deactivate_user/<int:user_id>', methods=['PATCH'])
+def deactivate_user(user_id):
+    try:
+        # Fetch the user from the database
+        user = Users.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Check if the user is already inactive
+        if not user.is_active:
+            return jsonify({"error": "User is already inactive"}), 400  # Return an error if already inactive
+
+        # Mark the user as inactive
+        user.is_active = False
+        db.session.commit()
+
+        return jsonify({"message": "User marked as inactive successfully", "user_id": user_id}), 200
+    except Exception as e:
+        db.session.rollback()  # Rollback in case of an error
+        return jsonify({"error": str(e)}), 500
+
+# Route to activate a user
+@routes_bp.route('/activate_user/<int:user_id>', methods=['PATCH'])
+def activate_user(user_id):
+    try:
+        # Fetch the user from the database
+        user = Users.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Check if the user is already active
+        if user.is_active:
+            return jsonify({"error": "User is already active"}), 400  # Return an error if already active
+
+        # Mark the user as active
+        user.is_active = True
+        db.session.commit()
+
+        return jsonify({"message": "User activated successfully", "user_id": user_id}), 200
     except Exception as e:
         db.session.rollback()  # Rollback in case of an error
         return jsonify({"error": str(e)}), 500
@@ -518,6 +567,33 @@ def delete_detection(detection_id):
 
     except Exception as e:
         db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+# Log In Route
+
+@routes_bp.route('/login', methods=['POST'])
+def login():
+    try:
+        # Get data from the request
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+
+        if not email or not password:
+            return jsonify({"error": "Email and password are required"}), 400
+
+        # Retrieve the user by email
+        user = Users.query.filter_by(email=email).first()
+        if not user:
+            return jsonify({"error": "Invalid email or password"}), 401
+
+        # Check the provided password against the stored hash
+        if check_password_hash(user.password_hash, password):
+            return jsonify({"message": "Login successful", "user_id": user.user_id}), 200
+        else:
+            return jsonify({"error": "Invalid email or password"}), 401
+
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 # Route to the root URL (/)

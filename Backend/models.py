@@ -42,6 +42,7 @@ class Users(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
     updated_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+    is_active = db.Column(db.Boolean, nullable=False, default=True) 
     
     # Relationship with Company
     company = db.relationship('Company', backref='users_reference')
