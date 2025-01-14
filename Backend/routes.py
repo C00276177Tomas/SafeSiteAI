@@ -20,7 +20,6 @@ def get_users():
             "last_name": user.last_name,
             "email": user.email,
             "role": user.role,
-            "password_hash": user.password_hash,
             "created_at": user.created_at.strftime('%Y-%m-%d %H:%M:%S') if user.created_at else None,
             "updated_at": user.updated_at.strftime('%Y-%m-%d %H:%M:%S') if user.updated_at else None,
             "is_active": user.is_active,
