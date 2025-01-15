@@ -425,3 +425,42 @@ h2::after {
 .slider-input:active::-moz-range-thumb {
 	background-color: #0056b3;
 }
+
+
+
+/* Navbar Right user settings
+
+/* User button and dropdown styles */
+.user-info {
+  position: absolute;
+  top: 5px;
+  right: 20px;
+}
+
+.user-button {
+  background-color: #a1690f;
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.dropdown-menu {
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 40px;
+  right: 0;
+  border: 1px solid #ddd;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-menu button {
+  background-color: #fff;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+}

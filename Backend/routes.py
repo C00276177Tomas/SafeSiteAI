@@ -2,9 +2,16 @@ from flask import Blueprint, jsonify, request
 from models import Users, Company, Camera, Settings, Detection, db  # Import the Users model and database instance
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+from datetime import datetime, timedelta, timezone
+import jwt, os
 
 # Create a Blueprint for the routes
 routes_bp = Blueprint('routes', __name__)
+
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # Users Routes
 
@@ -567,13 +574,11 @@ def delete_detection(detection_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
-    
-# Log In Route
 
+# Route to login and provide a token
 @routes_bp.route('/login', methods=['POST'])
 def login():
     try:
-        # Get data from the request
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
@@ -583,17 +588,20 @@ def login():
 
         # Retrieve the user by email
         user = Users.query.filter_by(email=email).first()
-        if not user:
+        if not user or not check_password_hash(user.password_hash, password):
             return jsonify({"error": "Invalid email or password"}), 401
 
-        # Check the provided password against the stored hash
-        if check_password_hash(user.password_hash, password):
-            return jsonify({"message": "Login successful", "user_id": user.user_id}), 200
-        else:
-            return jsonify({"error": "Invalid email or password"}), 401
+        # Generate the token (JWT)
+        token = jwt.encode({
+            'user_id': user.user_id,  # Store user id or other useful data in the token
+            'exp': datetime.now(timezone.utc) + timedelta(hours=1)  # Use timezone-aware datetime
+        }, SECRET_KEY, algorithm='HS256')
+
+        # Send the token in the response
+        return jsonify({'message': 'Login successful', 'token': token}), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500 
 
 # Route to the root URL (/)
 @routes_bp.route('/')

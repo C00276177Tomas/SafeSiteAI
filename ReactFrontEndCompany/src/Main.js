@@ -11,6 +11,27 @@ const Main = () => {
 
 	const [activeSection, setActiveSection] = useState('top'); // Initialize with 'top' for the Home link
 	const [isAdmin, setIsAdmin] = useState(true);
+	const [dropdownVisible, setDropdownVisible] = useState(false); // Controls dropdown visibility
+	const [userName, setUserName] = useState('John Doe'); // Placeholder for username
+
+	// Toggle the visibility of the dropdown menu
+	const toggleDropdown = () => {
+		setDropdownVisible(!dropdownVisible);
+	};
+
+	// Handle manage action
+	const handleManage = () => {
+		alert('Managing user...'); // Implement manage functionality here
+	};
+
+	// Handle logout action
+	const handleLogout = () => {
+		localStorage.removeItem('authToken'); // Remove token from localStorage
+		setUserName(''); // Clear username
+		setDropdownVisible(false); // Close dropdown
+		alert('Logged out');
+		window.location.href = '/login'; // Redirect to login page
+	};
 
 	const scrollToSection = (event, sectionId) => {
     event.preventDefault();
@@ -77,35 +98,47 @@ const Main = () => {
   return (
     <div className="App">
        <header>
-        <nav className="navbar">
-          <ul className="nav-links centered">
-					<li>
+				<nav className="navbar">
+					<ul className="nav-links centered">
+						<li>
 							<a href="#" onClick={(e) => scrollToSection(e, 'top')} className={activeSection === 'top' ? 'active' : ''}>Home</a>
-					</li>
-					<li>
-							<a href="#desc" onClick={(e) => scrollToSection(e, 'desc')} className={activeSection === 'desc' ? 'active' : ''}>Description</a>
-					</li>
-					{/* Conditionally render Users link with button for admins */}
-					{isAdmin && (
-						<li className="users-item">
-							<a
-								href="#users"
-								onClick={(e) => scrollToSection(e, 'users')}
-								className={activeSection === 'users' ? 'active' : ''}
-							>
-								Users
-							</a>
 						</li>
-					)}
-					<li>
+						<li>
+							<a href="#desc" onClick={(e) => scrollToSection(e, 'desc')} className={activeSection === 'desc' ? 'active' : ''}>Description</a>
+						</li>
+						{/* Conditionally render Users link with button for admins */}
+						{isAdmin && (
+							<li className="users-item">
+								<a
+									href="#users"
+									onClick={(e) => scrollToSection(e, 'users')}
+									className={activeSection === 'users' ? 'active' : ''}
+								>
+									Users
+								</a>
+							</li>
+						)}
+						<li>
 							<a href="#documentation" onClick={(e) => scrollToSection(e, 'documentation')} className={activeSection === 'documentation' ? 'active' : ''}>Documentation</a>
-					</li>
-					<li>
+						</li>
+						<li>
 							<a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} className={activeSection === 'contact' ? 'active' : ''}>Contact</a>
-					</li>
-          </ul>
-        </nav>
-      </header>
+						</li>
+					</ul>
+
+					<div className="user-info">
+						<button onClick={toggleDropdown} className="user-button">
+							{userName}
+						</button>
+						{dropdownVisible && (
+							<div className="dropdown-menu">
+								<button onClick={handleManage}>Manage</button>
+								<button onClick={handleLogout}>Log out</button>
+							</div>
+						)}
+					</div>
+				</nav>
+			</header>
 
       <main>
 
