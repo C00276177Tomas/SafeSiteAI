@@ -597,11 +597,35 @@ def login():
             'exp': datetime.now(timezone.utc) + timedelta(hours=1)  # Use timezone-aware datetime
         }, SECRET_KEY, algorithm='HS256')
 
-        # Send the token in the response
-        return jsonify({'message': 'Login successful', 'token': token}), 200
+        # Send the token and user_id in the response
+        return jsonify({
+            'message': 'Login successful',
+            'token': token,
+            'user_id': user.user_id  # Include user_id in the response
+        }), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500 
+        return jsonify({"error": str(e)}), 500
+    
+# Get name and surname
+
+@routes_bp.route('/get_user_name', methods=['GET'])
+def get_user_name():
+    user_id = request.args.get('user_id')  # Get user_id from query parameters
+    
+    if not user_id:
+        return jsonify({"message": "User ID is required"}), 400
+    
+    user = Users.query.get(user_id)  # Query the user by user_id
+
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    # Return only first_name and last_name
+    return jsonify({
+        "firstName": user.first_name,
+        "lastName": user.last_name
+    }), 200
 
 # Route to the root URL (/)
 @routes_bp.route('/')
