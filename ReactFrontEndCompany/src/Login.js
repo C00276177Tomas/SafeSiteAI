@@ -35,6 +35,7 @@ const Layout = () => {
 				localStorage.setItem('authToken', response.token); // Save the JWT token
 
 				console.log(response.token);
+				console.log(response.user_id);
 
         // Mark as authenticated
         setIsAuthenticated(true);

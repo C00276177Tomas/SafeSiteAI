@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, Link } from "react-router-dom";
 import './App.css';
 import faceshot from './images/faceshot.jpg'; // Import the image
@@ -6,18 +6,35 @@ import githubLogo from './images/github.png';
 import linkedInLogo from './images/linkedIn.png';
 import siteSafeLogo from './images/SiteSafeLogo.png';
 import NoHelmet from './images/1NoHelmet.jpg';
+import { fetchUserName } from "./Api";
 
 const Main = () => {
 
 	const [activeSection, setActiveSection] = useState('top'); // Initialize with 'top' for the Home link
 	const [isAdmin, setIsAdmin] = useState(true);
 	const [dropdownVisible, setDropdownVisible] = useState(false); // Controls dropdown visibility
-	const [userName, setUserName] = useState('John Doe'); // Placeholder for username
+	const [userName, setUserName] = useState('Error'); // Placeholder for username
+  const [error, setError] = useState(null);
+	const dropdownRef = useRef(null); // Ref for the dropdown menu
+  const buttonRef = useRef(null); // Ref for the button
+
+	useEffect(() => {
+    const getUserName = async () => {
+      try {
+        const name = await fetchUserName();
+        setUserName(name);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    getUserName();
+  }, []);
 
 	// Toggle the visibility of the dropdown menu
 	const toggleDropdown = () => {
-		setDropdownVisible(!dropdownVisible);
-	};
+    setDropdownVisible((prevState) => !prevState);
+  };
 
 	// Handle manage action
 	const handleManage = () => {
@@ -27,10 +44,10 @@ const Main = () => {
 	// Handle logout action
 	const handleLogout = () => {
 		localStorage.removeItem('authToken'); // Remove token from localStorage
+		localStorage.removeItem('userId'); // Remove userId from localStorage
 		setUserName(''); // Clear username
 		setDropdownVisible(false); // Close dropdown
-		alert('Logged out');
-		window.location.href = '/login'; // Redirect to login page
+		window.location.href = '/'; // Redirect to login page
 	};
 
 	const scrollToSection = (event, sectionId) => {
@@ -95,6 +112,27 @@ const Main = () => {
     };
   }, []);
 
+	useEffect(() => {
+    // Function to close the dropdown if clicked outside
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target) && 
+        !buttonRef.current.contains(event.target)
+      ) {
+        setDropdownVisible(false);
+      }
+    };
+
+    // Add the event listener to the document
+    document.addEventListener('click', handleClickOutside);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="App">
        <header>
@@ -127,11 +165,11 @@ const Main = () => {
 					</ul>
 
 					<div className="user-info">
-						<button onClick={toggleDropdown} className="user-button">
-							{userName}
+						<button onClick={toggleDropdown} className="user-button" ref={buttonRef}>
+							{userName ? userName : <span className="loading-text">Loading...</span>}
 						</button>
 						{dropdownVisible && (
-							<div className="dropdown-menu">
+							<div className="dropdown-menu" ref={dropdownRef}>
 								<button onClick={handleManage}>Manage</button>
 								<button onClick={handleLogout}>Log out</button>
 							</div>

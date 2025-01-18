@@ -47,6 +47,27 @@ export const login = async (email, password) => {
   }
 };
 
+export const fetchUserName = async () => {
+  const userId = localStorage.getItem("userId"); // Get the userId from localStorage
+
+  if (!userId) {
+    throw new Error("User ID not found. Please log in.");
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/get_user_name?user_id=${userId}`);
+    const data = await response.json();
+
+    if (response.ok) {
+      return `${data.firstName} ${data.lastName}`;
+    } else {
+      throw new Error(data.message || "An error occurred");
+    }
+  } catch (err) {
+    throw new Error("An error occurred while fetching user data");
+  }
+};
+
 // Export other functions like addUser, updateUser, etc., if needed
 // export const addUser = async (user) => {
 //   const response = await API.post('/users', user);

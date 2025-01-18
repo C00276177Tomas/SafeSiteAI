@@ -3,7 +3,6 @@ body {
   background-color: #ffffff;
 }
 
-
 .navbar {
   display: flex;
   justify-content: center;
@@ -111,7 +110,7 @@ footer {
 }
 
 footer a {
-    color: #ffcc00;
+    color: #a1690f;
     text-decoration: none;
 }
 
@@ -131,9 +130,9 @@ h2 {
 }
 
 h3 {
-  color: #333;
+  color: #4078A3;
   font-size: 2em;
-  position: relative; /* Required for absolute positioning of the pseudo-element */
+  position: relative;
 }
 
 h2::after {
@@ -218,16 +217,23 @@ h2::after {
   text-align: center; /* Center the text */
 }
 
+.job {
+	margin-top: 20px; /* Adds spacing to account for the offset */
+	padding-top: 20px; /* Creates a buffer above the section */
+	scroll-margin-top: 20px; /* Adjusts scroll position when navigating */
+}
+
 .scroll-link {
-	text-decoration: none; /* Remove underline from link */
-	color: inherit; /* Inherit color from parent (job-description) */
-	font-weight: bold; /* Make it bold if desired */
+	text-decoration: none;
+	color: inherit;
+	font-weight: bold; 
 }
 
 .scroll-link:hover {
-	color: red; /* Change color on hover if desired */
+	color: red;
 }
 
+<<<<<<< HEAD
 .button-container {
 	display: flex;
 	flex-direction: row; /* Arrange buttons horizontally */
@@ -438,29 +444,82 @@ h2::after {
 }
 
 .user-button {
-  background-color: #a1690f;
+  background-color: #8E44AD;
   border: none;
   padding: 10px 20px;
   color: white;
   cursor: pointer;
   font-size: 16px;
+  border-radius: 10px;
 }
 
 .dropdown-menu {
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #007bff; /* Set background color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
   position: absolute;
   top: 40px;
   right: 0;
-  border: 1px solid #ddd;
+  border: none; /* Remove border for a cleaner look */
+  border-radius: 8px; /* Add rounded corners */
   padding: 10px;
   display: flex;
   flex-direction: column;
 }
 
 .dropdown-menu button {
-  background-color: #fff;
-  border: none;
-  padding: 8px 16px;
+  background-color: transparent; /* Transparent to match menu background */
+  color: white; /* White text */
+  border: none; /* No borders */
+  padding: 10px 16px; /* Comfortable padding */
   cursor: pointer;
+  text-align: left; /* Align text to the left for a clean look */
+  font-size: 16px; /* Modern font size */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+  border-radius: 4px; /* Subtle rounded corners for buttons */
+}
+
+.dropdown-menu button:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Light hover effect */
+=======
+.responsive-img {
+	width: 50%; 
+	height: auto; 
+	max-width: 100%; 
+	display: inline-block;  
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+.machineLearning-navigation {
+	top: 0; /* Sticks the navigation to the top of the page */
+	background-color: white; /* Optional for contrast */
+	padding: 20px; /* More space for a cleaner look */
+	z-index: 1000; /* Ensures it stays on top of other content */
+	border: 2px solid #4078A3; /* Adds a cool border */
+	border-radius: 8px; /* Makes the corners rounded */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for a 3D effect */
+	width: fit-content; /* Ensures the width matches the content */
+	margin: 20px auto; /* Centers the navigation on the page */
+}
+
+.machineLearning-navigation a {
+	display: block; /* Makes the links stack vertically */
+	text-decoration: none;
+	color: #4078A3; /* Matches the specified blue color */
+	font-size: 1.2rem; /* Increases the text size slightly */
+	font-weight: bold; /* Makes the text stand out */
+	margin: 5px 0; /* Adds space between links */
+	padding: 5px 10px; /* Adds padding for a larger clickable area */
+	transition: all 0.3s ease; /* Smooth transition for hover effects */
+	border-radius: 4px; /* Rounded corners for hover effect */
+}
+
+.machineLearning-navigation a:hover {
+	text-decoration: underline;
+	background-color: #4078A3; /* Changes background on hover */
+	color: white; /* Changes text color to white on hover */
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Adds a slight shadow on hover */
+>>>>>>> 1ab86ee357e74ccc130684893936eb036bc301c5
 }
