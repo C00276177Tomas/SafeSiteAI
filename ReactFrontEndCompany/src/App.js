@@ -13,6 +13,7 @@ import Main from "./Main";
 import Login from "./Login";
 import Register from "./Register";
 import AddUser from "./AddUser";
+import ManageUsers from "./ManageUsers.js";
 import PrivateRoute from "./PrivateRoute";
 
 function App() {
@@ -38,6 +39,14 @@ function App() {
 					element={
 						<PrivateRoute>
 							<AddUser />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="manageUsers"
+					element={
+						<PrivateRoute>
+							<ManageUsers />
 						</PrivateRoute>
 					}
 				/>

@@ -147,13 +147,12 @@ const Main = () => {
 						{/* Conditionally render Users link with button for admins */}
 						{isAdmin && (
 							<li className="users-item">
-								<a
-									href="#users"
-									onClick={(e) => scrollToSection(e, 'users')}
+								<Link 
+									to="/manageUsers" 
 									className={activeSection === 'users' ? 'active' : ''}
 								>
 									Users
-								</a>
+								</Link>
 							</li>
 						)}
 						<li>
