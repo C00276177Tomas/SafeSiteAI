@@ -233,7 +233,6 @@ h2::after {
 	color: red;
 }
 
-<<<<<<< HEAD
 .button-container {
 	display: flex;
 	flex-direction: row; /* Arrange buttons horizontally */
@@ -480,46 +479,4 @@ h2::after {
 
 .dropdown-menu button:hover {
   background-color: rgba(255, 255, 255, 0.2); /* Light hover effect */
-=======
-.responsive-img {
-	width: 50%; 
-	height: auto; 
-	max-width: 100%; 
-	display: inline-block;  
-}
-
-html {
-	scroll-behavior: smooth;
-}
-
-.machineLearning-navigation {
-	top: 0; /* Sticks the navigation to the top of the page */
-	background-color: white; /* Optional for contrast */
-	padding: 20px; /* More space for a cleaner look */
-	z-index: 1000; /* Ensures it stays on top of other content */
-	border: 2px solid #4078A3; /* Adds a cool border */
-	border-radius: 8px; /* Makes the corners rounded */
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for a 3D effect */
-	width: fit-content; /* Ensures the width matches the content */
-	margin: 20px auto; /* Centers the navigation on the page */
-}
-
-.machineLearning-navigation a {
-	display: block; /* Makes the links stack vertically */
-	text-decoration: none;
-	color: #4078A3; /* Matches the specified blue color */
-	font-size: 1.2rem; /* Increases the text size slightly */
-	font-weight: bold; /* Makes the text stand out */
-	margin: 5px 0; /* Adds space between links */
-	padding: 5px 10px; /* Adds padding for a larger clickable area */
-	transition: all 0.3s ease; /* Smooth transition for hover effects */
-	border-radius: 4px; /* Rounded corners for hover effect */
-}
-
-.machineLearning-navigation a:hover {
-	text-decoration: underline;
-	background-color: #4078A3; /* Changes background on hover */
-	color: white; /* Changes text color to white on hover */
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Adds a slight shadow on hover */
->>>>>>> 1ab86ee357e74ccc130684893936eb036bc301c5
 }
