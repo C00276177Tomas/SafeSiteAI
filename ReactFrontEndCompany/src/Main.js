@@ -13,7 +13,7 @@ const Main = () => {
 	const [activeSection, setActiveSection] = useState('top'); // Initialize with 'top' for the Home link
 	const [isAdmin, setIsAdmin] = useState(true);
 	const [dropdownVisible, setDropdownVisible] = useState(false); // Controls dropdown visibility
-	const [userName, setUserName] = useState('Error'); // Placeholder for username
+	const [userName, setUserName] = useState('Loading'); // Placeholder for username
   const [error, setError] = useState(null);
 	const dropdownRef = useRef(null); // Ref for the dropdown menu
   const buttonRef = useRef(null); // Ref for the button
@@ -35,11 +35,6 @@ const Main = () => {
 	const toggleDropdown = () => {
     setDropdownVisible((prevState) => !prevState);
   };
-
-	// Handle manage action
-	const handleManage = () => {
-		alert('Managing user...'); // Implement manage functionality here
-	};
 
 	// Handle logout action
 	const handleLogout = () => {
@@ -169,7 +164,6 @@ const Main = () => {
 						</button>
 						{dropdownVisible && (
 							<div className="dropdown-menu" ref={dropdownRef}>
-								<button onClick={handleManage}>Manage</button>
 								<button onClick={handleLogout}>Log out</button>
 							</div>
 						)}

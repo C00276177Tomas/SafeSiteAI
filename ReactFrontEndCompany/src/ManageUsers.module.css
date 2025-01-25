@@ -1,60 +1,201 @@
+/* Container for the main page */
 .container {
   padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #333;
 }
 
+/* Header container with flexible layout */
+.headerContainer {
+  display: flex;
+  justify-content: space-between; /* Align buttons to the left and right */
+  align-items: center; /* Vertically center items */
+  width: 100%; /* Ensure the container takes full width */
+  position: relative; /* For absolute positioning of the title */
+}
+
+/* Center the title horizontally */
+.centerTitle {
+  text-align: center;
+  position: absolute; /* Position it relative to the container */
+  left: 50%; /* Move it to the center of the container */
+  transform: translateX(-50%); /* Adjust to perfectly center the title */
+  margin: 0;
+  flex-grow: 1; /* Allow title to grow if necessary */
+}
+
+/* Styling for the left and right links */
+.leftLink, .rightLink {
+  flex-shrink: 0; /* Prevent shrinking of the buttons */
+}
+
+/* Back buttons in the header */
+.topRightLink {
+  display: flex;
+  gap: 10px; /* Space between buttons */
+}
+
+.backButton {
+  background-color: #0288d1; /* Primary blue color */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.backButton:hover {
+  background-color: #0277bd; /* Darker blue on hover */
+  transform: scale(1.05); /* Slight grow effect */
+}
+
+/* Styling for the user list table */
 .table {
   width: 100%;
   border-collapse: collapse;
-}
-
-.table th,
-.table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .table th {
   background-color: #f4f4f4;
+  color: #555;
   font-weight: bold;
+  padding: 10px;
+  text-align: left;
 }
 
-/* Container for the header (button) and table */
-.headerContainer {
-  display: flex;
-  justify-content: space-between; /* Align items on the left and right */
-  align-items: center; /* Vertically align items */
-  flex-direction: row-reverse; /* Reverses the order of items */
+.table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
 }
 
-.topRightLink {
-  display: flex;
-  justify-content: flex-end; /* Align the button to the right */
+.table tr:hover {
+  background-color: #f1f1f1;
 }
 
-.backButton {
-  background-color: #0288d1; /* Button color */
-  color: white; /* Text color */
-  padding: 10px 20px; /* Padding */
-  border: none; /* Remove border */
-  border-radius: 5px; /* Rounded corners */
-  font-size: 16px; /* Font size */
-  cursor: pointer;
-  text-decoration: none; /* Remove underline */
-  display: inline-block;
-}
-
-.backButton:hover {
-  background-color: #0277b3; /* Darker shade on hover */
-}
-
+/* Styling for action icons */
 .icon {
-  width: 20px; /* Adjust the icon size as needed */
-  height: 20px; /* Adjust the icon size as needed */
+  width: 24px;
+  height: 24px;
   cursor: pointer;
+  transition: transform 0.2s, opacity 0.3s;
 }
 
-/* Ensures the table occupies the full width */
-.table {
+.icon:hover {
+  transform: scale(1.2);
+  opacity: 0.8;
+}
+
+/* Modal overlay background */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal content container */
+.modalContent {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  z-index: 1001;
+}
+
+.modalContent h2 {
+  margin-bottom: 20px;
+  color: #0288d1; /* Deeper blue for the header */
+}
+
+.formGroup {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.formGroup label {
+  display: block;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="email"] {
   width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.formGroup input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.button {
+  display: inline-block;
+  background-color: #0288d1;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.button:hover {
+  background-color: #0277bd;
+  transform: scale(1.05);
+}
+
+.button:disabled {
+  background-color: #b0bec5; /* Disabled gray */
+  cursor: not-allowed;
+}
+
+.button.red {
+  background-color: #e57373; /* Red cancel button */
+}
+
+.button.red:hover {
+  background-color: #d32f2f; /* Darker red on hover */
+}
+
+/* Adjustments for mobile responsiveness */
+@media screen and (max-width: 768px) {
+  .headerContainer {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .backButton {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .table th, .table td {
+    font-size: 14px;
+    padding: 8px;
+  }
 }

@@ -81,3 +81,43 @@ h2 {
 .link a:hover {
   text-decoration: underline;
 }
+
+/* Style the labels */
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Style the input fields */
+input[type="text"],
+input[type="email"] {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+
+/* Add focus effect to input fields */
+input[type="text"]:focus,
+input[type="email"]:focus {
+  border-color: #0288d1; /* Blue border on focus */
+  outline: none; /* Remove the default outline */
+}
+
+/* Style the required fields (if needed) */
+input[required] {
+  border: 2px solid #0288d1; /* Highlight border color */
+}
+
+input[required]:invalid {
+  border-color: #e57373; /* Red border if invalid */
+}
+
+input[required]:valid {
+  border-color: #81c784; /* Green border if valid */
+}

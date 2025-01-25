@@ -453,30 +453,34 @@ h2::after {
 }
 
 .dropdown-menu {
-  background-color: #007bff; /* Set background color */
+  background-color: #8E44AD; /* Purple background */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
   position: absolute;
   top: 40px;
   right: 0;
   border: none; /* Remove border for a cleaner look */
   border-radius: 8px; /* Add rounded corners */
-  padding: 10px;
+  padding: 8px; /* Smaller padding for a compact look */
   display: flex;
   flex-direction: column;
+  align-items: stretch; /* Match the button's width */
+  width: fit-content; /* Automatically match the button width */
 }
 
 .dropdown-menu button {
-  background-color: transparent; /* Transparent to match menu background */
+  background-color: #A569BD; /* Slightly lighter purple for buttons */
   color: white; /* White text */
   border: none; /* No borders */
-  padding: 10px 16px; /* Comfortable padding */
+  padding: 8px 12px; /* Comfortable padding for a clean look */
   cursor: pointer;
-  text-align: left; /* Align text to the left for a clean look */
-  font-size: 16px; /* Modern font size */
+  text-align: center; /* Center text inside the button */
+  font-size: 14px; /* Slightly smaller font for a compact look */
   transition: background-color 0.3s ease; /* Smooth hover effect */
   border-radius: 4px; /* Subtle rounded corners for buttons */
+  white-space: nowrap; /* Prevent text wrapping */
+  min-width: 100px; /* Optional: Ensure enough space for longer text */
 }
 
 .dropdown-menu button:hover {
-  background-color: rgba(255, 255, 255, 0.2); /* Light hover effect */
+  background-color: #6C3483; /* Darker purple on hover */
 }

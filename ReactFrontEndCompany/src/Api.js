@@ -68,6 +68,113 @@ export const fetchUserName = async () => {
   }
 };
 
+// Get users for table based on admin id
+
+export const fetchUsersByCompany = async (companyId) => {
+  try {
+    const response = await fetch(`${API_URL}/get_users/${companyId}`); // Pass companyId in the URL
+    if (!response.ok) {
+      throw new Error(`Failed to fetch users for company ID ${companyId}: ${response.statusText}`);
+    }
+    const data = await response.json(); // Assuming the API returns a JSON object with a "users" array
+    return data.users; // Return the users array from the response
+  } catch (error) {
+    console.error(`Error fetching users for company ID ${companyId}:`, error);
+    throw error; // Re-throw the error so it can be handled in the component
+  }
+};
+
+// Add user
+
+export const addUser = async (user) => {
+  try {
+    const response = await fetch(`${API_URL}/add_user`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to add user");
+    }
+
+    const data = await response.json();
+    return data; // Return success message or created user ID
+  } catch (error) {
+    console.error("Error adding user:", error);
+    throw error; // Re-throw error to be handled in the calling code
+  }
+};
+
+// Delete user
+
+export const deleteUser = async (userId) => {
+  try {
+    // Get the currently logged-in user's ID from localStorage
+    const loggedInUserId = localStorage.getItem('userId'); // Replace 'userId' with the key you're using
+
+    // Check if the logged-in user is attempting to delete themselves
+    if (loggedInUserId && parseInt(loggedInUserId, 10) === userId) {
+      throw new Error('You cannot delete your own account.');
+    }
+
+    const response = await fetch(`${API_URL}/delete_user/${userId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete user');
+    }
+
+    const data = await response.json();
+    return data; // You can return the response or just log the success message
+  } catch (error) {
+    console.error('Error in API call for deleting user:', error);
+    throw error; // Throwing the error so it can be caught in the component
+  }
+};
+
+// Edit user
+
+export const editUser = async (userId, updatedData) => {
+  try {
+    // Destructure to avoid sending user_id in the update request
+    const { user_id, ...dataToUpdate } = updatedData; 
+
+    // Ensure only editable fields are sent (first_name, last_name, email, role)
+    const allowedFields = ['first_name', 'last_name', 'email', 'role'];
+    const filteredData = Object.keys(dataToUpdate)
+      .filter((key) => allowedFields.includes(key))
+      .reduce((obj, key) => {
+        obj[key] = dataToUpdate[key];
+        return obj;
+      }, {});
+
+    // Send the PUT request to update the user profile
+    const response = await fetch(`${API_URL}/update_user/${userId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(filteredData), // Send the updated data without user_id
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update user');
+    }
+
+    const data = await response.json();
+    return data; // Return the response or log the success message
+  } catch (error) {
+    console.error('Error in API call for editing user:', error);
+    throw error; // Throwing the error so it can be caught in the component
+  }
+};
+
+
 // Export other functions like addUser, updateUser, etc., if needed
 // export const addUser = async (user) => {
 //   const response = await API.post('/users', user);

@@ -28,14 +28,18 @@ const Layout = () => {
         setMessage(`Success: ${response.message}`);
         setMessageColor('green');
 
-        // Optionally store user data or token
+        // store user id
         localStorage.setItem('userId', response.user_id);
+
+				// store company id
+        localStorage.setItem('companyId', response.company_id);
 
 				// Store the token in localStorage (or sessionStorage if preferred)
 				localStorage.setItem('authToken', response.token); // Save the JWT token
 
 				console.log(response.token);
 				console.log(response.user_id);
+				console.log(response.company_id);
 
         // Mark as authenticated
         setIsAuthenticated(true);
