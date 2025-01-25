@@ -601,7 +601,8 @@ def login():
         return jsonify({
             'message': 'Login successful',
             'token': token,
-            'user_id': user.user_id  # Include user_id in the response
+            'user_id': user.user_id,  # Include user_id in the response
+						'company_id': user.company_id
         }), 200
 
     except Exception as e:
@@ -626,6 +627,37 @@ def get_user_name():
         "firstName": user.first_name,
         "lastName": user.last_name
     }), 200
+
+# Get users based on company id
+
+# Route to get users by company_id
+@routes_bp.route('/get_users/<int:company_id>', methods=['GET'])
+def get_users_by_company(company_id):
+    # Query Users table for users with the given company_id
+    users_by_company = Users.query.filter_by(company_id=company_id).all()
+    
+    # Create a list of users with their details
+    user_list = [
+        {
+            "user_id": user.user_id,
+            "company_id": user.company_id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "role": user.role,
+            "created_at": user.created_at.strftime('%Y-%m-%d %H:%M:%S') if user.created_at else None,
+            "updated_at": user.updated_at.strftime('%Y-%m-%d %H:%M:%S') if user.updated_at else None,
+            "is_active": user.is_active,
+            "company": {
+                "company_id": user.company.company_id,
+                "company_name": user.company.company_name,
+            } if user.company else None
+        }
+        for user in users_by_company
+    ]
+
+    # Return the filtered user list as JSON
+    return jsonify({"users": user_list})
 
 # Route to the root URL (/)
 @routes_bp.route('/')
