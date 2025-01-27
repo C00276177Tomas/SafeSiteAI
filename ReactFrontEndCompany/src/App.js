@@ -15,6 +15,7 @@ import Register from "./Register";
 import AddUser from "./AddUser";
 import ManageUsers from "./ManageUsers.js";
 import PrivateRoute from "./PrivateRoute";
+import AdminRoute from './AdminRoute.js';
 
 function App() {
 
@@ -37,17 +38,17 @@ function App() {
 				<Route
 					path="addUser"
 					element={
-						<PrivateRoute>
+						<AdminRoute>
 							<AddUser />
-						</PrivateRoute>
+						</AdminRoute>
 					}
 				/>
 				<Route
 					path="manageUsers"
 					element={
-						<PrivateRoute>
+						<AdminRoute>
 							<ManageUsers />
-						</PrivateRoute>
+						</AdminRoute>
 					}
 				/>
 			</Routes>

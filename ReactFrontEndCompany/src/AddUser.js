@@ -43,10 +43,16 @@ const AddUser = () => {
     }
 
     // Check if passwords match
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
+		if (password !== confirmPassword) {
+			alert("Passwords do not match!");
+			return;
+		}
+
+		// Check if password meets criteria
+		if (password.length < 6 || !/[a-z]/.test(password) || !/[A-Z]/.test(password)) {
+			alert("Password must be at least 6 characters long and contain at least one lowercase letter and one uppercase letter.");
+			return;
+		}
 
     try {
       setLoading(true); // Show loader

@@ -11,12 +11,25 @@ import { fetchUserName } from "./Api";
 const Main = () => {
 
 	const [activeSection, setActiveSection] = useState('top'); // Initialize with 'top' for the Home link
-	const [isAdmin, setIsAdmin] = useState(true);
+	const [isAdmin, setIsAdmin] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false); // Controls dropdown visibility
 	const [userName, setUserName] = useState('Loading'); // Placeholder for username
   const [error, setError] = useState(null);
 	const dropdownRef = useRef(null); // Ref for the dropdown menu
   const buttonRef = useRef(null); // Ref for the button
+
+	useEffect(() => {
+		// Retrieve the value from localStorage and parse it to a boolean
+		const role = localStorage.getItem('role');
+		console.log(role);
+		
+		// If the value exists and is 'true', set isAdmin to true, otherwise false
+		if (role === 'admin') {
+			setIsAdmin(true);
+		} else {
+			setIsAdmin(false);
+		}
+	}, []);
 
 	useEffect(() => {
     const getUserName = async () => {

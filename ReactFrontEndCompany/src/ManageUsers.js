@@ -58,18 +58,43 @@ const ManageUsers = () => {
   };
 
   const handleSaveEdit = async (updatedData) => {
-    setLoading(true);
-    try {
-      await editUser(userToEdit.user_id, updatedData);
-      const updatedUsers = await fetchUsersByCompany(companyId);
-      setUsers(updatedUsers);
-      setIsModalOpen(false);
-    } catch (error) {
-      setError(`Error updating user: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
+		// Regex for email validation
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+		// Regex for name validation (letters, spaces, hyphens, and apostrophes only)
+		const nameRegex = /^[a-zA-Z\s'-]+$/;
+	
+		// Validate email
+		if (!emailRegex.test(updatedData.email)) {
+			alert('Invalid email address. Please enter a valid email.');
+			return; // Prevent submission
+		}
+	
+		// Validate first name
+		if (!nameRegex.test(updatedData.first_name)) {
+			alert('First name contains invalid characters. Only letters, spaces, hyphens, and apostrophes are allowed.');
+			return; // Prevent submission
+		}
+	
+		// Validate last name
+		if (!nameRegex.test(updatedData.last_name)) {
+			alert('Last name contains invalid characters. Only letters, spaces, hyphens, and apostrophes are allowed.');
+			return; // Prevent submission
+		}
+	
+		setLoading(true);
+		try {
+			await editUser(userToEdit.user_id, updatedData);
+			const updatedUsers = await fetchUsersByCompany(companyId);
+			setUsers(updatedUsers);
+			setIsModalOpen(false);
+		} catch (error) {
+			alert(`Error updating user: ${error.message}`);
+		} finally {
+			setLoading(false);
+		}
+	};
+	
+	
 
   const columns = useMemo(
     () => [

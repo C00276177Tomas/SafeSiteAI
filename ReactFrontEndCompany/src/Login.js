@@ -34,12 +34,16 @@ const Layout = () => {
 				// store company id
         localStorage.setItem('companyId', response.company_id);
 
+				// is admin
+        localStorage.setItem('role', response.role);
+
 				// Store the token in localStorage (or sessionStorage if preferred)
 				localStorage.setItem('authToken', response.token); // Save the JWT token
 
 				console.log(response.token);
 				console.log(response.user_id);
 				console.log(response.company_id);
+				console.log(response.role);
 
         // Mark as authenticated
         setIsAuthenticated(true);
