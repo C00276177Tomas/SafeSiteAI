@@ -602,7 +602,8 @@ def login():
             'message': 'Login successful',
             'token': token,
             'user_id': user.user_id,  # Include user_id in the response
-						'company_id': user.company_id
+						'company_id': user.company_id,
+						'role': user.role
         }), 200
 
     except Exception as e:
