@@ -92,6 +92,7 @@ label {
 
 /* Style the input fields */
 input[type="text"],
+input[type="password"],
 input[type="email"] {
   width: 100%;
   padding: 8px;
@@ -105,8 +106,8 @@ input[type="email"] {
 /* Add focus effect to input fields */
 input[type="text"]:focus,
 input[type="email"]:focus {
-  border-color: #0288d1; /* Blue border on focus */
-  outline: none; /* Remove the default outline */
+  border-color: #0288d1;
+  outline: none;
 }
 
 /* Style the required fields (if needed) */
