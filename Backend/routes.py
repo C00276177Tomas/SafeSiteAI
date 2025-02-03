@@ -1,17 +1,44 @@
 from flask import Blueprint, jsonify, request
-from models import Users, Company, Camera, Settings, Detection, db  # Import the Users model and database instance
+from models import Users, Company, Camera, Settings, Detection, db
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
 import jwt, os
+import base64
+import cv2
+import numpy as np
 
 # Create a Blueprint for the routes
 routes_bp = Blueprint('routes', __name__)
 
+# Load environment variables
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("No SECRET_KEY set for Flask application")
+
+# Example route for user registration
+@routes_bp.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    
+    if not username or not password:
+        return jsonify({'error': 'Username and password are required'}), 400
+    
+    hashed_password = generate_password_hash(password)
+    new_user = Users(username=username, password_hash=hashed_password)
+    
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({'message': 'User registered successfully'}), 201
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({'error': 'Username already exists'}), 400
 
 # Users Routes
 
@@ -659,6 +686,73 @@ def get_users_by_company(company_id):
 
     # Return the filtered user list as JSON
     return jsonify({"users": user_list})
+
+# Add Company with admin user and settings
+
+@routes_bp.route('/create_company', methods=['POST'])
+def create_company():
+    try:
+        data = request.get_json()
+
+        # Extract input fields
+        company_name = data.get('company_name')
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
+        email = data.get('email')
+        password_hash = data.get('password_hash')  # Hash this before sending for security
+
+        # Validation: Ensure all required fields are provided
+        if not (company_name and first_name and last_name and email and password_hash):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # Start a transaction
+        with db.session.begin_nested():
+            # Step 1: Create the Company
+            new_company = Company(company_name=company_name)
+            db.session.add(new_company)
+            db.session.flush()  # This retrieves the company_id for the newly created company
+
+            # Step 2: Create the User (default role is 'admin')
+            new_user = Users(
+                company_id=new_company.company_id,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                password_hash=password_hash,  # Ensure to hash the password securely
+                role='admin'  # Automatically set as admin
+            )
+            db.session.add(new_user)
+
+            # Step 3: Create the Settings
+            new_settings = Settings(
+                company_id=new_company.company_id,
+                confidence_threshold=0.8,  # Example default value
+                onoff_email=False,
+                onoff_sms=False,
+                notification_email="",
+                notification_sms=""
+            )
+            db.session.add(new_settings)
+
+        # Commit the transaction
+        db.session.commit()
+
+        # Return success response
+        return jsonify({
+            "message": "Company, admin user, and settings created successfully",
+            "company_id": new_company.company_id,
+            "user_id": new_user.user_id,
+            "settings_id": new_settings.settings_id
+        }), 201
+
+    except IntegrityError as e:
+        db.session.rollback()  # Roll back the transaction in case of an error
+        return jsonify({"error": str(e.orig)}), 500
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+# Websocket
 
 # Route to the root URL (/)
 @routes_bp.route('/')
