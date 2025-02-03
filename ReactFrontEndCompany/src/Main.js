@@ -7,6 +7,7 @@ import linkedInLogo from './images/linkedIn.png';
 import siteSafeLogo from './images/SiteSafeLogo.png';
 import NoHelmet from './images/1NoHelmet.jpg';
 import { fetchUserName } from "./Api";
+import CameraStream from "./CameraStream";
 
 const Main = () => {
 
@@ -234,7 +235,16 @@ const Main = () => {
 				<section id="profile" className="profile-section">
 					<div className="profile-content">
 						<h1 className="welcome-message">Connect your camera to start detecting</h1>
-						<img src={NoHelmet} alt="Video" className="welcome-image" />
+
+
+
+						{/* <img src={NoHelmet} alt="Video" className="welcome-image" /> */}
+						<div>
+							<CameraStream />
+						</div>
+
+
+
 						<p className="job-description">
 								<a 
 										href="#desc" 
