@@ -37,7 +37,7 @@ const CameraStream = () => {
 
     useEffect(() => {
         if (cameraOn) {
-            const interval = setInterval(sendFrame, 100); // Send frames every 100ms (~10 FPS)
+            const interval = setInterval(sendFrame, 500); // Send frames every 100ms (~10 FPS)
             return () => clearInterval(interval);
         }
     }, [cameraOn]);

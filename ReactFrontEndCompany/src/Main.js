@@ -192,12 +192,12 @@ const Main = () => {
 					<img src={siteSafeLogo} alt="Site Safe Logo" />
 			</div>
 
-			{/* Right-side controls */}
+			{/*Right-side controls
 			<div className="right-controls">
 					<button className="control-button">Turn Camera On/Off</button>
 					<button className="control-button">Set Automatic Email/Phone</button>
 
-					{/* Email Notification Toggle */}
+				
 					<div className="toggle-container">
 							<p className="toggle-text">Email Notification</p>
 							<label className="toggle-label">
@@ -206,7 +206,7 @@ const Main = () => {
 							</label>
 					</div>
 
-					{/* SMS Notification Toggle */}
+					
 					<div className="toggle-container">
 							<p className="toggle-text">SMS Notification</p>
 							<label className="toggle-label">
@@ -215,7 +215,7 @@ const Main = () => {
 							</label>
 					</div>
 
-					{/* Detection Sensitivity Slider */}
+					
 					<div className="slider-container">
 							<label htmlFor="detection-sensitivity" className="slider-label">Detection Sensitivity</label>
 							<input
@@ -229,7 +229,7 @@ const Main = () => {
 					</div>
 					<button className="control-button" style={{ marginTop: '20px' }}>Open Dashboard</button>
 					<button className="control-button" style={{ marginTop: '1400px' }}>Add User</button>
-			</div>
+			</div> */}
 
 			<section className="main-section">
 				<section id="profile" className="profile-section">
