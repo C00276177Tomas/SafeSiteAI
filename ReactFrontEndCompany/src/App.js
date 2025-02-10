@@ -13,6 +13,7 @@ import Main from "./Main";
 import Login from "./Login";
 import Register from "./Register";
 import AddUser from "./AddUser";
+import ChangeSettings from './ChangeSettings.js';
 import ManageUsers from "./ManageUsers.js";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from './AdminRoute.js';
@@ -32,6 +33,14 @@ function App() {
 					element={
 						<PrivateRoute>
 							<Main />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="changeSettings"
+					element={
+						<PrivateRoute>
+							<ChangeSettings />
 						</PrivateRoute>
 					}
 				/>

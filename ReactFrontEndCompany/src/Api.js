@@ -174,6 +174,23 @@ export const editUser = async (userId, updatedData) => {
   }
 };
 
+// Get Settings By ID
+
+export const fetchSettingsById = async (companyId) => {
+  try {
+    const response = await fetch(`${API_URL}/get_settings/${companyId}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch settings for company ID ${companyId}: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.settings; // Return the settings object from the response
+  } catch (error) {
+    console.error(`Error fetching settings for company ID ${companyId}:`, error);
+    throw error;
+  }
+};
+
+
 
 // Export other functions like addUser, updateUser, etc., if needed
 // export const addUser = async (user) => {

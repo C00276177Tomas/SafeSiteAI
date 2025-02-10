@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 
 const socket = io("http://localhost:5000");
@@ -9,6 +10,8 @@ const CameraStream = () => {
     const [processedFrame, setProcessedFrame] = useState(null);
     const [stream, setStream] = useState(null);
     const [cameraOn, setCameraOn] = useState(false);
+
+		const navigate = useNavigate();
 
     useEffect(() => {
         // Listen for processed frames from server
@@ -63,25 +66,8 @@ const CameraStream = () => {
         }
     };
 
-		const openSettings = async () => {
-				if (cameraOn) {
-						// Stop the video stream
-						if (stream) {
-								stream.getTracks().forEach(track => track.stop());
-						}
-						setStream(null);
-						setCameraOn(false);
-				} else {
-						// Start the video stream
-						try {
-								const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
-								if (videoRef.current) videoRef.current.srcObject = newStream;
-								setStream(newStream);
-								setCameraOn(true);
-						} catch (err) {
-								console.error("Error accessing camera:", err);
-						}
-				}
+		const openSettings = () => {
+			navigate("/changeSettings");
 		};
 
     return (
