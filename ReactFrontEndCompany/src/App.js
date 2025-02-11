@@ -15,6 +15,7 @@ import Register from "./Register";
 import AddUser from "./AddUser";
 import ChangeSettings from './ChangeSettings.js';
 import ManageUsers from "./ManageUsers.js";
+import Detections from "./Detections.js"
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from './AdminRoute.js';
 
@@ -41,6 +42,14 @@ function App() {
 					element={
 						<PrivateRoute>
 							<ChangeSettings />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="detections"
+					element={
+						<PrivateRoute>
+							<Detections />
 						</PrivateRoute>
 					}
 				/>

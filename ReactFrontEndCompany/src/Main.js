@@ -164,6 +164,17 @@ const Main = () => {
 								</Link>
 							</li>
 						)}
+						{/* Conditionally render Users link with button for admins */}
+						{(
+							<li className="users-item">
+								<Link 
+									to="/detections" 
+									className={activeSection === 'Detections' ? 'active' : ''}
+								>
+									Detections
+								</Link>
+							</li>
+						)}
 						<li>
 							<a href="#documentation" onClick={(e) => scrollToSection(e, 'documentation')} className={activeSection === 'documentation' ? 'active' : ''}>Documentation</a>
 						</li>
