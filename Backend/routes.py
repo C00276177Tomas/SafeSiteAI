@@ -751,6 +751,33 @@ def create_company():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+# Get Settings By ID
+
+# Route to get settings by company_id
+@routes_bp.route('/get_settings/<int:company_id>', methods=['GET'])
+def get_settings_by_company(company_id):
+    # Query Settings table for the given company_id
+    settings = Settings.query.filter_by(company_id=company_id).first()
+    
+    if not settings:
+        print(f"No settings found for company_id: {company_id}")  # Debugging log
+        return jsonify({"error": "Settings not found"}), 404
+
+    # Convert settings object to a dictionary
+    settings_data = {
+        "settings_id": settings.settings_id,
+        "company_id": settings.company_id,
+        "confidence_threshold": settings.confidence_threshold,
+        "onoff_email": settings.onoff_email,
+        "onoff_sms": settings.onoff_sms,
+        "notification_email": settings.notification_email,
+        "notification_sms": settings.notification_sms,
+        "updated_at": settings.updated_at.strftime('%Y-%m-%d %H:%M:%S') if settings.updated_at else None,
+    }
+
+    return jsonify({"settings": settings_data})
+
     
 # Websocket
 
