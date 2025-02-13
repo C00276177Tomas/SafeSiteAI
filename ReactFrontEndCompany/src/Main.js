@@ -295,12 +295,6 @@ const Main = () => {
 
         </section>
 
-				<section id="users">
-					<h2>Users</h2>
-					<br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
-          
-        </section>
-
         <section id="documentation">
 						<h2>Documentation</h2>
 						

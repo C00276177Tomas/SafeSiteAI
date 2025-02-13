@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import styles from "./Register.module.css"; // Import CSS Module
-import { getUsers, addUser, updateUser, deleteUser } from './Api';
+import { getUsers, createCompany } from './Api';
 
 const Register = () => {
   const [isRegistered, setIsRegistered] = useState(false);
@@ -24,22 +24,46 @@ const Register = () => {
   };
 
   const handleRegister = () => {
-    if (password === confirmPassword) {
-			console.log("isRegistered:", isRegistered);
-			console.log("First Name:", firstName);
-			console.log("Last Name:", lastName);
-			console.log("Company Name:", companyName);
-			console.log("Admin Email:", adminEmail);
-			console.log("Password:", password);
-			console.log("Confirm Password:", confirmPassword);
-
-			console.log("Fetched Users:", users);
-
-      setIsRegistered(true);
-    } else {
-      alert("Passwords do not match!");
+    // Ensure all fields are filled
+    if (!companyName || !firstName || !lastName || !adminEmail || !password || !confirmPassword) {
+        alert("All fields are required!");
+        return;
     }
-  };
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+    }
+
+    // Define company data
+    const companyData = {
+        company_name: companyName,
+        first_name: firstName,
+        last_name: lastName,
+        email: adminEmail,
+        password_hash: password, // Ensure hashing if needed before sending
+    };
+
+    console.log("Registering with data:", companyData);
+
+    // Call API to create company
+    createCompany(companyData)
+				.then((response) => {
+						console.log("Company created successfully:", response);
+						
+						// Show success alert with company name
+						alert(`Company "${companyName}" has been created successfully!`);
+
+						// Redirect after successful creation
+						setIsRegistered(true);
+				})
+        .catch((error) => {
+            console.error("Company creation failed:", error);
+            alert("Failed to create company. Please try again.");
+        });
+	};
+
 
   if (isRegistered) {
     return <Navigate to="/main" />;

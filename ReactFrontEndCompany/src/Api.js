@@ -206,6 +206,31 @@ export const fetchDetectionsById = async (companyId) => {
   }
 };
 
+// Register Company
+
+export const createCompany = async (companyData) => {
+  try {
+    const response = await fetch(`${API_URL}/create_company`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(companyData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create company: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data; // Return the response data
+  } catch (error) {
+    console.error("Error creating company:", error);
+    throw error;
+  }
+};
+
+
 
 
 // Export other functions like addUser, updateUser, etc., if needed
