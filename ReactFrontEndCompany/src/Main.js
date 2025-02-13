@@ -245,7 +245,7 @@ const Main = () => {
 			<section className="main-section">
 				<section id="profile" className="profile-section">
 					<div className="profile-content">
-						<h1 className="welcome-message">Connect your camera to start detecting</h1>
+						{/* <h1 className="welcome-message">Connect your camera to start detecting</h1> */}
 
 
 

@@ -190,6 +190,22 @@ export const fetchSettingsById = async (companyId) => {
   }
 };
 
+// Get Detections By ID
+
+export const fetchDetectionsById = async (companyId) => {
+  try {
+    const response = await fetch(`${API_URL}/get_detections_by_company/${companyId}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch detections for company ID ${companyId}: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data.detections; // Return the detections object from the response
+  } catch (error) {
+    console.error(`Error fetching detection for company ID ${companyId}:`, error);
+    throw error;
+  }
+};
+
 
 
 // Export other functions like addUser, updateUser, etc., if needed

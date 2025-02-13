@@ -53,6 +53,7 @@ const CameraStream = () => {
             }
             setStream(null);
             setCameraOn(false);
+						setProcessedFrame(null);
         } else {
             // Start the video stream
             try {
@@ -70,35 +71,68 @@ const CameraStream = () => {
 			navigate("/changeSettings");
 		};
 
+		useEffect(() => {
+			// Cleanup when navigating away
+			return () => {
+					if (cameraOn && stream) {
+							stream.getTracks().forEach(track => track.stop());
+					}
+			};
+	}, [stream]);
+
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-								<button onClick={toggleCamera} className="control-button" style={{ marginRight: '10px' }}>
-										{cameraOn ? "Turn Off Camera" : "Turn On Camera"}
-								</button>
-								<button onClick={openSettings} className="control-button">
-										{"Settings"}
-								</button>
-						</div>
+							<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+									{/* Control Buttons */}
+									<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+											<button onClick={toggleCamera} className="control-button" style={{ marginRight: '10px' }}>
+													{cameraOn ? "Turn Off Camera" : "Turn On Camera"}
+											</button>
+											<button onClick={openSettings} className="control-button">
+													{"Settings"}
+											</button>
+									</div>
+					
+									{/* Hidden Video Element (Required for Capturing Frames) */}
+									<video 
+											ref={videoRef} 
+											autoPlay 
+											playsInline 
+											style={{ display: 'none' }} // Keep it hidden but active 
+									/>
+					
+									<canvas ref={canvasRef} width={1280} height={720} hidden />
+					
+									{/* Processed Video Display */}
+									<div style={{ width: '80%' }}>
+											<div style={{ textAlign: 'center' }}>
+											<h3 style={{ display: 'inline-block', marginRight: '100px' }}>
+													{cameraOn ? `Camera: ID 1` : 'Camera: OFF'}
+											</h3>
+											<h3 style={{ display: 'inline-block' }}>
+													{cameraOn ? `Location: Front Door` : 'Location: N/A'}
+											</h3>
+											</div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '80%' }}>
-                {/* Original Video */}
-                <div style={{ width: '48%' }}>
-                    <h3 style={{ textAlign: 'center' }}>Live Video</h3>
-                    <video ref={videoRef} autoPlay playsInline style={{ width: '100%', display: cameraOn ? 'block' : 'none' }} />
-                    <canvas ref={canvasRef} width={400} height={300} hidden />
-                </div>
-
-                {/* Processed Video */}
-                <div style={{ width: '48%' }}>
-                    <h3 style={{ textAlign: 'center' }}>Processed Frame</h3>
-                    {processedFrame && (
-                        <img src={processedFrame} alt="Processed" style={{ width: '100%', height: 'auto', borderRadius: '10px' }} />
-                    )}
-                </div>
-            </div>
-        </div>
-    );
+											{processedFrame ? (
+													<img 
+															src={processedFrame} 
+															alt="Processed" 
+															style={{ width: '100%', height: 'auto', borderRadius: '10px' }} 
+													/>
+											) : (
+												<h1 className="welcome-message" style={{ 
+														border: '2px solid #000', // Adjust the color and width of the border
+														padding: '10px',           // Add padding inside the border
+														borderRadius: '5px',       // Optional: rounds the corners
+														textAlign: 'center'        // Optional: to center the text
+												}}>
+														Connect your camera to start detecting
+												</h1>
+											)}
+									</div>
+							</div>
+					);
+	
 };
 
 export default CameraStream;
