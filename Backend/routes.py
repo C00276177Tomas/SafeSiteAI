@@ -778,6 +778,48 @@ def get_settings_by_company(company_id):
 
     return jsonify({"settings": settings_data})
 
+@routes_bp.route('/get_detections_by_company/<int:company_id>', methods=['GET'])
+def get_detections_by_company(company_id):
+    # Query the Camera table to get all camera IDs that belong to the given company_id
+    camera_ids = Camera.query.filter_by(company_id=company_id).with_entities(Camera.camera_id).all()
+    camera_ids = [camera_id[0] for camera_id in camera_ids]  # Extract camera_id from tuple
+    
+    # Query the Detections table and join with the Users table to get usernames
+    detections_by_company = (
+        db.session.query(
+            Detection.detection_id,
+            Detection.camera_id,
+            Detection.detection_type,
+            Detection.confidence,
+            Detection.detection_datetime,
+            Users.first_name,  # Fetch username instead of user_id
+						Users.last_name
+        )
+        .join(Users, Users.user_id == Detection.user_id)  # Join with User table
+        .filter(Detection.camera_id.in_(camera_ids))
+        .all()
+    )
+
+    # Create a list of detections with their details
+    detection_list = [
+        {
+            "detection_id": detection.detection_id,
+            "camera_id": detection.camera_id,
+            "detection_type": detection.detection_type,
+            "confidence": detection.confidence,
+            "detection_datetime": detection.detection_datetime.strftime('%Y-%m-%d %H:%M:%S') if detection.detection_datetime else None,
+            "first_name": detection.first_name, # Return username instead of user_id
+						"last_name": detection.last_name
+        }
+        for detection in detections_by_company
+    ]
+
+    # Return the filtered detection list as JSON
+    return jsonify({"detections": detection_list})
+
+
+
+
     
 # Websocket
 

@@ -9,6 +9,20 @@ import base64
 import cv2
 import numpy as np
 
+# Define the file to store the counter
+counter_file = 'counter.txt'
+
+def get_counter():
+    try:
+        with open(counter_file, 'r') as f:
+            return int(f.read())
+    except (FileNotFoundError, ValueError):
+        return 0
+
+def save_counter(counter):
+    with open(counter_file, 'w') as f:
+        f.write(str(counter))
+
 def create_app(config_class=DevelopmentConfig):
     # Initialize Flask app
     app = Flask(__name__)
@@ -39,7 +53,6 @@ def create_app(config_class=DevelopmentConfig):
     @socketio.on('send_frame')
     def handle_send_frame(data):
         try:
-            print('Received frame:', data)
 
             if isinstance(data, dict) and 'image' in data:
                 image_data = data['image'].split(',')[1]  # Remove base64 prefix
@@ -52,6 +65,24 @@ def create_app(config_class=DevelopmentConfig):
                 # Run YOLO detection
                 results = model(img)  # Run YOLO on the image
                 detections = results[0].boxes.data  # Get bounding box data
+                
+								# Assuming 'noHelmet' corresponds to class ID 1 (adjust accordingly)
+                no_helmet_class_id = 1
+
+								# Initialize the counter
+                no_helmet_count = 0
+
+								# Loop through each detection and check if it matches the 'noHelmet' class
+                for detection in detections:
+                    class_id = detection[5]  # Assuming the class ID is at index 5
+                    if class_id == no_helmet_class_id:
+                      counter = get_counter()
+                      counter += 1
+                      save_counter(counter)
+
+                
+
+                print(counter)
 
                 # Draw bounding boxes on the image
                 for detection in detections:
@@ -74,7 +105,6 @@ def create_app(config_class=DevelopmentConfig):
                 processed_image_data = base64.b64encode(buffer).decode('utf-8')
 
                 # Emit the processed frame back to the client
-                print("frame_processed")
                 socketio.emit('frame_processed', {'image': processed_image_data})
 
             else:
