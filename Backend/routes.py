@@ -699,18 +699,21 @@ def create_company():
         first_name = data.get('first_name')
         last_name = data.get('last_name')
         email = data.get('email')
-        password_hash = data.get('password_hash')  # Hash this before sending for security
+        password = data.get('password_hash')  # Hash this before storing
 
         # Validation: Ensure all required fields are provided
-        if not (company_name and first_name and last_name and email and password_hash):
+        if not all([company_name, first_name, last_name, email, password]):
             return jsonify({"error": "Missing required fields"}), 400
+
+        # Hash the password
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=12)
 
         # Start a transaction
         with db.session.begin_nested():
             # Step 1: Create the Company
             new_company = Company(company_name=company_name)
             db.session.add(new_company)
-            db.session.flush()  # This retrieves the company_id for the newly created company
+            db.session.flush()  # Retrieve company_id for the newly created company
 
             # Step 2: Create the User (default role is 'admin')
             new_user = Users(
@@ -718,7 +721,7 @@ def create_company():
                 first_name=first_name,
                 last_name=last_name,
                 email=email,
-                password_hash=password_hash,  # Ensure to hash the password securely
+                password_hash=hashed_password,  # Use hashed password here
                 role='admin'  # Automatically set as admin
             )
             db.session.add(new_user)
@@ -745,12 +748,14 @@ def create_company():
             "settings_id": new_settings.settings_id
         }), 201
 
-    except IntegrityError as e:
-        db.session.rollback()  # Roll back the transaction in case of an error
-        return jsonify({"error": str(e.orig)}), 500
+    except IntegrityError:
+        db.session.rollback()  # Rollback in case of error
+        return jsonify({"error": "Duplicate email or company name"}), 400  
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
 
 # Get Settings By ID
 

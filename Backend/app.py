@@ -5,23 +5,35 @@ from db import db  # Import db from db.py
 from routes import routes_bp  # Import routes blueprint
 from config import DevelopmentConfig, TestingConfig
 from ultralytics import YOLO
+from collections import deque
 import base64
 import cv2
 import numpy as np
+import time
+from models import Detection, db
+from datetime import datetime
 
 # Define the file to store the counter
 counter_file = 'counter.txt'
 
+# Initialize the counter from the file
 def get_counter():
     try:
         with open(counter_file, 'r') as f:
             return int(f.read())
     except (FileNotFoundError, ValueError):
-        return 0
+        return 0  # Return 0 if file not found or invalid data
 
 def save_counter(counter):
     with open(counter_file, 'w') as f:
         f.write(str(counter))
+        
+# Initialize global frame history to store results across frames
+frame_history = deque(maxlen=10)
+
+# Initialize a global variable to track the last incident addition time
+last_incident_time = 0
+current_time = 0
 
 def create_app(config_class=DevelopmentConfig):
     # Initialize Flask app
@@ -52,6 +64,8 @@ def create_app(config_class=DevelopmentConfig):
     
     @socketio.on('send_frame')
     def handle_send_frame(data):
+        global last_incident_time
+        global current_time
         try:
 
             if isinstance(data, dict) and 'image' in data:
@@ -62,26 +76,71 @@ def create_app(config_class=DevelopmentConfig):
                 nparr = np.frombuffer(image_data, np.uint8)
                 img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-                # Run YOLO detection
                 results = model(img)  # Run YOLO on the image
                 detections = results[0].boxes.data  # Get bounding box data
-                
-								# Assuming 'noHelmet' corresponds to class ID 1 (adjust accordingly)
-                no_helmet_class_id = 1
 
-								# Initialize the counter
-                no_helmet_count = 0
+                # Initialize a flag to track if "NoHelmet" is detected
+                no_helmet_detected = False
 
-								# Loop through each detection and check if it matches the 'noHelmet' class
+                # Loop through each detection and check if "NoHelmet" is detected
                 for detection in detections:
-                    class_id = detection[5]  # Assuming the class ID is at index 5
-                    if class_id == no_helmet_class_id:
-                      counter = get_counter()
-                      counter += 1
-                      save_counter(counter)
+                    x1, y1, x2, y2, confidence, class_id = detection  # Unpack the detection
 
-                
+                    # Get the class name from the class ID
+                    class_name = model.names[int(class_id)]  # Map class_id to class name
 
+                    # Check if it's the "NoHelmet" class
+                    if class_name == "noHelmet":
+                        no_helmet_detected = True
+                        break  # Exit loop once "NoHelmet" is found in this frame
+
+                # Update the frame history with the detection result (True for "NoHelmet", False otherwise)
+                frame_history.append(no_helmet_detected)
+
+                # Initialize no_helmet_count (in case frame_history is less than 10)
+                no_helmet_count = sum(frame_history)
+
+                # After 10 frames, check the condition
+                if len(frame_history) == 10:
+                    # If 8 or more frames out of the last 10 detected "NoHelmet", print the message
+                    if no_helmet_count >= 8:
+                        current_time = time.time()  # Get current time in seconds
+
+                    # Check if enough time has passed since last incident addition
+                    if current_time - last_incident_time >= 30:
+                        print("Make database incident addition")
+                        
+												# Get the current camera_id, user_id, and other necessary information
+                        camera_id = 1  # Example: You will need to get this dynamically based on your app
+                        user_id = 6    # Example: You will need to get this dynamically as well
+                        detection_type = "NoHelmet"
+                        detection_confidence = float(confidence)  # Assuming the last confidence from detections
+                        
+												# Use a default BLOB (image data) for now
+                        image_data = b"fake_image_data"  # Simple placeholder for image data as BLOB
+                        
+                        # Add the detection to the database
+                        new_detection = Detection(
+                            camera_id=camera_id,
+                            user_id=user_id,
+                            detection_type=detection_type,
+                            detection_datetime = datetime.now(),  # Use current time if not provided
+                            confidence=detection_confidence,
+                            image_data=image_data  # Store the image as BLOB
+                        )
+                        
+                        db.session.add(new_detection)
+                        db.session.commit()
+                        # Update the last incident time to the current time
+                        last_incident_time = current_time
+                    else:
+                        print(f"Cooldown active. Please wait {30 - (current_time - last_incident_time):.1f} more seconds.")
+
+                # Optionally, print the current state of frame history and the "NoHelmet" count
+                print(f"Frame history: {list(frame_history)}")
+                print(f"NoHelmet detected in {no_helmet_count} out of the last 10 frames.")
+
+                counter = get_counter()
                 print(counter)
 
                 # Draw bounding boxes on the image
