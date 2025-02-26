@@ -10,6 +10,10 @@ const CameraStream = () => {
     const [processedFrame, setProcessedFrame] = useState(null);
     const [stream, setStream] = useState(null);
     const [cameraOn, setCameraOn] = useState(false);
+		const [companyId] = useState(() => {
+			const storedCompanyId = localStorage.getItem('companyId');
+			return storedCompanyId ? storedCompanyId : 0;
+		});
 
 		const navigate = useNavigate();
 
@@ -35,7 +39,7 @@ const CameraStream = () => {
         context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
         
         const imageData = canvasRef.current.toDataURL("image/jpeg");
-        socket.emit("send_frame", { image: imageData }); // Send frame to backend
+        socket.emit("send_frame", { image: imageData, userId: companyId }); // Send frame to backend
     };
 
     useEffect(() => {
@@ -121,10 +125,10 @@ const CameraStream = () => {
 													/>
 											) : (
 												<h1 className="welcome-message" style={{ 
-														border: '2px solid #000', // Adjust the color and width of the border
-														padding: '10px',           // Add padding inside the border
-														borderRadius: '5px',       // Optional: rounds the corners
-														textAlign: 'center'        // Optional: to center the text
+														border: '2px solid #000', 
+														padding: '10px',         
+														borderRadius: '5px',     
+														textAlign: 'center'    
 												}}>
 														Connect your camera to start detecting
 												</h1>
