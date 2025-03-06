@@ -230,6 +230,106 @@ export const createCompany = async (companyData) => {
   }
 };
 
+// Get Cameras by id
+
+// Get cameras for a company based on company ID
+export const fetchCamerasByCompany = async (companyId) => {
+  try {
+    const response = await fetch(`${API_URL}/get_cameras/${companyId}`); // Pass companyId in the URL
+    if (!response.ok) {
+      throw new Error(`Failed to fetch cameras for company ID ${companyId}: ${response.statusText}`);
+    }
+    const data = await response.json(); // Assuming the API returns a JSON object with a "cameras" array
+    return data.cameras; // Return the cameras array from the response
+  } catch (error) {
+    console.error(`Error fetching cameras for company ID ${companyId}:`, error);
+    throw error; // Re-throw the error so it can be handled in the component
+  }
+};
+
+
+// Add Camera
+
+export const addCamera = async (camera) => {
+  try {
+    const response = await fetch(`${API_URL}/add_camera`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(camera),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to add camera");
+    }
+
+    const data = await response.json();
+    return data; // Return success message or created camera ID
+  } catch (error) {
+    console.error("Error adding camera:", error);
+    throw error; // Re-throw error to be handled in the calling code
+  }
+};
+
+// Delete camera
+
+export const deleteCamera = async (cameraId) => {
+  try {
+    const response = await fetch(`${API_URL}/delete_camera/${cameraId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete camera');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error in API call for deleting camera:', error);
+    throw error;
+  }
+};
+
+// Edit camera
+
+export const editCamera = async (cameraId, updatedData) => {
+  try {
+    // Destructure to avoid sending camera_id in the update request
+    const { camera_id, ...dataToUpdate } = updatedData; 
+
+    // Ensure only editable fields are sent (camera_name, location)
+    const allowedFields = ['camera_name', 'location'];
+    const filteredData = Object.keys(dataToUpdate)
+      .filter((key) => allowedFields.includes(key))
+      .reduce((obj, key) => {
+        obj[key] = dataToUpdate[key];
+        return obj;
+      }, {});
+
+    // Send the PUT request to update the camera profile
+    const response = await fetch(`${API_URL}/update_camera/${cameraId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(filteredData), // Send the updated data without camera_id
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update camera');
+    }
+
+    const data = await response.json();
+    return data; // Return the response or log the success message
+  } catch (error) {
+    console.error('Error in API call for editing camera:', error);
+    throw error; // Throwing the error so it can be caught in the component
+  }
+};
+
 
 
 

@@ -164,6 +164,16 @@ const Main = () => {
 								</Link>
 							</li>
 						)}
+						{isAdmin && (
+							<li className="users-item">
+								<Link 
+									to="/manageCameras" 
+									className={activeSection === 'customers' ? 'active' : ''}
+								>
+									Cameras
+								</Link>
+							</li>
+						)}
 						{/* Conditionally render Users link with button for admins */}
 						{(
 							<li className="users-item">

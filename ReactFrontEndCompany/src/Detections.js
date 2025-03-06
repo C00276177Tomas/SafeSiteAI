@@ -3,6 +3,53 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './ManageUsers.module.css';
 import { fetchDetectionsById } from './Api';
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root');
+
+
+const ImageModal = ({ isOpen, imageData, onClose }) => {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Image Modal"
+      className={styles.modalContent}
+      overlayClassName={styles.modalOverlay}
+    >
+      <div style={{ textAlign: 'center' }}>
+        <h2>Image Preview</h2>
+        <img
+          src={`data:image/jpeg;base64,${imageData}`}
+          alt="Detection"
+          style={{
+            maxWidth: '100%',
+            height: 'auto',
+            marginTop: '20px',
+            borderRadius: '8px',
+          }}
+        />
+        <div style={{ marginTop: '20px' }}>
+          <button
+            onClick={onClose}
+            style={{
+              backgroundColor: '#d32f2f',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              padding: '10px 20px',
+              cursor: 'pointer',
+              fontSize: '16px',
+              transition: 'background-color 0.3s',
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
 
 const Detections = () => {
 	const [companyId] = useState(() => {
@@ -12,10 +59,24 @@ const Detections = () => {
 	const [detections, setDetections] = useState([]);
 	const [error, setError] = useState(null);
 
+	const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [imageData, setImageData] = useState(null);
+
+  const openImageModal = (imageData) => {
+    setImageData(imageData);
+    setIsImageModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setIsImageModalOpen(false);
+    setImageData(null);
+  };
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const detectionData = await fetchDetectionsById(companyId);
+				
 				setDetections(Array.isArray(detectionData) ? detectionData : []);
 
 				console.log("Detections");
@@ -74,7 +135,19 @@ const Detections = () => {
       { 
 				Header: 'Detected By', 
 				accessor: d => `${d.first_name} ${d.last_name}` 
-			}
+			},
+			{
+        Header: 'Image',
+        accessor: 'image_data',
+        Cell: ({ value }) => (
+          <img
+            src={`data:image/jpeg;base64,${value}`}
+            alt="Detection"
+            style={{ width: '50px', height: '50px', cursor: 'pointer' }}
+            onClick={() => openImageModal(value)}
+          />
+        ),
+      },
     ],
     []
   );
@@ -115,6 +188,12 @@ const Detections = () => {
           })}
         </tbody>
       </table>
+
+			<ImageModal
+        isOpen={isImageModalOpen}
+        imageData={imageData}
+        onClose={closeImageModal}
+      />
     </div>
   );
 };

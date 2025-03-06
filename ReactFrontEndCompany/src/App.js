@@ -13,8 +13,10 @@ import Main from "./Main";
 import Login from "./Login";
 import Register from "./Register";
 import AddUser from "./AddUser";
+import AddCamera from "./AddCamera.js";
 import ChangeSettings from './ChangeSettings.js';
 import ManageUsers from "./ManageUsers.js";
+import ManageCameras from "./ManageCameras.js";
 import Detections from "./Detections.js"
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from './AdminRoute.js';
@@ -62,10 +64,26 @@ function App() {
 					}
 				/>
 				<Route
+					path="addCamera"
+					element={
+						<AdminRoute>
+							<AddCamera />
+						</AdminRoute>
+					}
+				/>
+				<Route
 					path="manageUsers"
 					element={
 						<AdminRoute>
 							<ManageUsers />
+						</AdminRoute>
+					}
+				/>
+				<Route
+					path="manageCameras"
+					element={
+						<AdminRoute>
+							<ManageCameras />
 						</AdminRoute>
 					}
 				/>

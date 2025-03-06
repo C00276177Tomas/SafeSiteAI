@@ -1,8 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
+import {fetchCamerasByCompany } from './Api';
+import Modal from 'react-modal';
+import styles from './ManageUsers.module.css';
+
 
 const socket = io("http://localhost:5000");
+
+// Set the app element globally to the root div of your app
+Modal.setAppElement('#root');
 
 const CameraStream = () => {
     const videoRef = useRef(null);
@@ -14,6 +21,27 @@ const CameraStream = () => {
 			const storedCompanyId = localStorage.getItem('companyId');
 			return storedCompanyId ? storedCompanyId : 0;
 		});
+		const [userId] = useState(() => {
+			const storedUserId = localStorage.getItem('userId');
+			return storedUserId ? storedUserId : 0;
+		});
+		const [cameras, setCameras] = useState([]);
+		const [showModal, setShowModal] = useState(false);
+		const [isModalOpen, setIsModalOpen] = useState(false);
+
+		const [cameraId, setCameraId] = useState(null);
+		const [cameraLocation, setCameraLocation] = useState(null);
+
+
+		const openModal = () => {
+			console.log('Opening Modal');
+			setIsModalOpen(true);
+		};
+	
+		const closeModal = () => {
+			console.log('Closing Modal');
+			setIsModalOpen(false);
+		};
 
 		const navigate = useNavigate();
 
@@ -39,7 +67,7 @@ const CameraStream = () => {
         context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
         
         const imageData = canvasRef.current.toDataURL("image/jpeg");
-        socket.emit("send_frame", { image: imageData, userId: companyId }); // Send frame to backend
+        socket.emit("send_frame", { image: imageData, userId: userId, cameraId: cameraId  }); // Send frame to backend
     };
 
     useEffect(() => {
@@ -49,7 +77,26 @@ const CameraStream = () => {
         }
     }, [cameraOn]);
 
-    const toggleCamera = async () => {
+		const fetchCameras = async () => {
+			try {
+				const camerasData = await fetchCamerasByCompany(companyId);
+				setCameras(camerasData);
+				console.log(cameras);
+	
+				if (camerasData.length === 0) {
+					alert("A camera needs to be added first.");
+					return;
+				}
+	
+				// Show the modal if there are cameras available
+				setIsModalOpen(true);
+				setShowModal(true);
+			} catch (err) {
+				console.error("Error fetching cameras:", err);
+			}
+		};
+
+    const toggleCamera = async (camera) => {
         if (cameraOn) {
             // Stop the video stream
             if (stream) {
@@ -61,13 +108,18 @@ const CameraStream = () => {
         } else {
             // Start the video stream
             try {
-                const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                if (videoRef.current) videoRef.current.srcObject = newStream;
-                setStream(newStream);
-                setCameraOn(true);
-            } catch (err) {
-                console.error("Error accessing camera:", err);
-            }
+							setIsModalOpen(false);
+							setCameraId(camera.camera_id);
+    					setCameraLocation(camera.location);
+						
+							// Continue with camera stream if cameras exist
+							const newStream = await navigator.mediaDevices.getUserMedia({ video: true });
+							if (videoRef.current) videoRef.current.srcObject = newStream;
+							setStream(newStream);
+							setCameraOn(true);
+						} catch (err) {
+							console.error("Error accessing camera:", err);
+						}
         }
     };
 
@@ -88,13 +140,191 @@ const CameraStream = () => {
 							<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 									{/* Control Buttons */}
 									<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+											{cameraOn ? (
 											<button onClick={toggleCamera} className="control-button" style={{ marginRight: '10px' }}>
 													{cameraOn ? "Turn Off Camera" : "Turn On Camera"}
 											</button>
+											) : (
+											<button onClick={fetchCameras} className="control-button" style={{ marginRight: '10px' }}>
+													{cameraOn ? "Turn Off Camera" : "Choose Camera"}
+											</button>
+											)}
 											<button onClick={openSettings} className="control-button">
 													{"Settings"}
 											</button>
 									</div>
+
+									{/* Modal displaying camera data in a table */}
+									{(
+
+										
+										<Modal
+										isOpen={isModalOpen}
+										onRequestClose={closeModal}
+										contentLabel="Select Camera"
+										className={styles.modalContent}
+										overlayClassName={styles.modalOverlay}
+										>
+										<h2>Select Camera</h2>
+
+										{/* Check if there are cameras available */}
+										{cameras.length === 0 ? (
+											<p>No cameras available. Please add a camera first.</p>
+										) : (
+											<table
+												style={{
+													width: '100%',
+													borderCollapse: 'collapse',
+													marginTop: '10px',
+													boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+												}}
+											>
+												<thead
+													style={{
+														backgroundColor: '#f4f4f4',
+														color: '#333',
+														fontWeight: 'bold',
+													}}
+												>
+													<tr>
+														<th
+															style={{
+																padding: '10px',
+																borderBottom: '2px solid #ddd',
+																textAlign: 'left',
+															}}
+														>
+															Camera ID
+														</th>
+														<th
+															style={{
+																padding: '10px',
+																borderBottom: '2px solid #ddd',
+																textAlign: 'left',
+															}}
+														>
+															Camera Name
+														</th>
+														<th
+															style={{
+																padding: '10px',
+																borderBottom: '2px solid #ddd',
+																textAlign: 'left',
+															}}
+														>
+															Location
+														</th>
+													</tr>
+												</thead>
+												<tbody>
+													{cameras.map((camera) => (
+														<tr
+															key={camera.camera_id}
+															onClick={() => toggleCamera(camera)}
+															style={{
+																cursor: 'pointer',
+																transition: 'background-color 0.3s ease',
+															}}
+															onMouseOver={(e) => {
+																// Change the background color of the entire row
+																e.currentTarget.style.backgroundColor = '#e0f7fa'; // Light blue
+															}}
+															onMouseOut={(e) => {
+																// Reset the background color when mouse leaves
+																e.currentTarget.style.backgroundColor = ''; // Reset to default
+															}}
+														>
+															<td
+																style={{
+																	padding: '8px',
+																	borderBottom: '1px solid #ddd',
+																	fontSize: '14px',
+																}}
+															>
+																{camera.camera_id}
+															</td>
+															<td
+																style={{
+																	padding: '8px',
+																	borderBottom: '1px solid #ddd',
+																	fontSize: '14px',
+																}}
+															>
+																{camera.camera_name}
+															</td>
+															<td
+																style={{
+																	padding: '8px',
+																	borderBottom: '1px solid #ddd',
+																	fontSize: '14px',
+																}}
+															>
+																{camera.location}
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+										)}
+
+
+
+
+										{/* Close modal button */}
+										<button onClick={closeModal}  
+										style={{
+												backgroundColor: '#d32f2f',
+												color: 'white',
+												border: 'none',
+												borderRadius: '5px',
+												padding: '10px 20px',
+												cursor: 'pointer',
+												fontSize: '16px',
+												transition: 'background-color 0.3s',
+												marginTop: '10px',
+										}}>Close </button>
+										</Modal>
+										// <Modal
+										// 	isOpen={isModalOpen}
+										// 	onRequestClose={() => setIsModalOpen(false)}
+										// 	contentLabel="Select Camera"
+										// 	className="modalContent" // Add your custom styles here
+										// 	overlayClassName="modalOverlay" // Add your custom styles here
+										// >
+										// 	<h2>Select Camera</h2>
+
+										// 	{/* Check if there are cameras available */}
+										// 	{cameras.length === 0 ? (
+										// 		<p>No cameras available. Please add a camera first.</p>
+										// 	) : (
+										// 		// Table with camera data
+										// 		<table>
+										// 			<thead>
+										// 				<tr>
+										// 					<th>Camera Name</th>
+										// 					<th>Location</th>
+										// 				</tr>
+										// 			</thead>
+										// 			<tbody>
+										// 				{cameras.map((camera) => (
+										// 					<tr key={camera.camera_id} onClick={() => toggleCamera(camera)}>
+										// 						<td>{camera.camera_name}</td>
+										// 						<td>{camera.location}</td>
+										// 					</tr>
+										// 				))}
+										// 			</tbody>
+										// 		</table>
+										// 	)}
+
+										// 	{/* Close modal button */}
+										// 	<button onClick={() => setIsModalOpen(false)}>Close</button>
+										// </Modal>
+									)}
+
+
+
+
+
 					
 									{/* Hidden Video Element (Required for Capturing Frames) */}
 									<video 
@@ -110,10 +340,10 @@ const CameraStream = () => {
 									<div style={{ width: '80%' }}>
 											<div style={{ textAlign: 'center' }}>
 											<h3 style={{ display: 'inline-block', marginRight: '100px' }}>
-													{cameraOn ? `Camera: ID 1` : 'Camera: OFF'}
+													{cameraOn ? `Camera: ID ${cameraId}` : 'Camera: OFF'}
 											</h3>
 											<h3 style={{ display: 'inline-block' }}>
-													{cameraOn ? `Location: Front Door` : 'Location: N/A'}
+													{cameraOn ? `Location: ${cameraLocation}` : 'Location: N/A'}
 											</h3>
 											</div>
 
