@@ -149,8 +149,11 @@ const CameraStream = () => {
 													{cameraOn ? "Turn Off Camera" : "Choose Camera"}
 											</button>
 											)}
-											<button onClick={openSettings} className="control-button">
+											<button onClick={openSettings} className="control-button" style={{ marginRight: '10px' }}>
 													{"Settings"}
+											</button>
+											<button onClick={openSettings} className="control-button">
+													{"Dashboard"}
 											</button>
 									</div>
 
