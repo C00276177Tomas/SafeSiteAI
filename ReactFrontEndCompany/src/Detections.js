@@ -94,6 +94,10 @@ const Detections = () => {
 
 	const data = useMemo(() => detections, [detections]);
 
+	const sortedData = useMemo(() => {
+		return [...data].sort((a, b) => a.detection_id - b.detection_id);
+	}, [data]);
+
   // Example detection data
   // const data = useMemo(
   //   () => [
@@ -152,7 +156,7 @@ const Detections = () => {
     []
   );
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data:sortedData });
 
   return (
     <div className={styles.container}>

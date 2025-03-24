@@ -8,6 +8,7 @@ import siteSafeLogo from './images/SiteSafeLogo.png';
 import NoHelmet from './images/1NoHelmet.jpg';
 import { fetchUserName } from "./Api";
 import CameraStream from "./CameraStream";
+import CameraStream2 from "./CameraStream2";
 
 const Main = () => {
 
@@ -18,6 +19,9 @@ const Main = () => {
   const [error, setError] = useState(null);
 	const dropdownRef = useRef(null); // Ref for the dropdown menu
   const buttonRef = useRef(null); // Ref for the button
+
+	const [showCameraStream, setShowCameraStream] = useState(false);
+	const [showButton, setShowButton] = useState(true);
 
 	useEffect(() => {
 		// Retrieve the value from localStorage and parse it to a boolean
@@ -142,6 +146,11 @@ const Main = () => {
     };
   }, []);
 
+	const toggleCameraStream = () => {
+    setShowCameraStream(!showCameraStream);
+    setShowButton(false); // Hide the button when clicked
+  };
+
   return (
     <div className="App">
        <header>
@@ -261,8 +270,28 @@ const Main = () => {
 
 						{/* <img src={NoHelmet} alt="Video" className="welcome-image" /> */}
 						<div>
-							<CameraStream />
+						<CameraStream />
 						</div>
+
+						{/* Button to toggle CameraStream */}
+						<div>
+						{showButton && (
+								<button
+									onClick={toggleCameraStream}
+									className="control-button"
+									style={{ marginTop: '5px', marginBottom: '5px' }}
+								>
+									{showCameraStream ? "Hide Second Camera" : "Add Second Camera"}
+								</button>
+							)}
+						</div>
+
+						{/* Conditionally render CameraStream */}
+						{showCameraStream && (
+							<div>
+								<CameraStream2 setShowButton={setShowButton} setShowCameraStream={setShowCameraStream}/>
+							</div>
+						)}
 
 
 

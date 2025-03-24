@@ -11,7 +11,8 @@ const socket = io("http://localhost:5000");
 // Set the app element globally to the root div of your app
 Modal.setAppElement('#root');
 
-const CameraStream = () => {
+const CameraStream2 = ({ setShowButton, setShowCameraStream }) => {
+
 
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
@@ -59,20 +60,20 @@ const CameraStream = () => {
 		const navigate = useNavigate();
 
     useEffect(() => {
-			// Listen for processed frames from server
-			socket.on("frame_processed", (data) => {
-					if (data.image && data.cameraId === cameraId) {
-							// Only process the frame if the cameraId matches
-							setProcessedFrame(`data:image/jpeg;base64,${data.image}`);
-					} else if (data.error) {
-							console.error("Error:", data.error);
-					}
-			});
-	
-			return () => {
-					socket.off("frame_processed");
-			};
-	}, [cameraId]); // Make sure to re-run the effect if cameraId changes
+					// Listen for processed frames from server
+					socket.on("frame_processed", (data) => {
+							if (data.image && data.cameraId === cameraId) {
+									// Only process the frame if the cameraId matches
+									setProcessedFrame(`data:image/jpeg;base64,${data.image}`);
+							} else if (data.error) {
+									console.error("Error:", data.error);
+							}
+					});
+			
+					return () => {
+							socket.off("frame_processed");
+					};
+			}, [cameraId]); // Make sure to re-run the effect if cameraId changes
 
     const sendFrame = () => {
         if (!videoRef.current || !canvasRef.current) return;
@@ -105,25 +106,6 @@ const CameraStream = () => {
 				// Show the modal if there are cameras available
 				setIsModalOpen(true);
 				setShowModal(true);
-			} catch (err) {
-				console.error("Error fetching cameras:", err);
-			}
-		};
-
-		const fetchCameras2 = async () => {
-			try {
-				const camerasData = await fetchCamerasByCompany(companyId);
-				setCameras(camerasData);
-				console.log(cameras);
-	
-				if (camerasData.length === 0) {
-					alert("A camera needs to be added first.");
-					return;
-				}
-	
-				// Show the modal if there are cameras available
-				setIsModalOpen2(true);
-				setShowModal2(true);
 			} catch (err) {
 				console.error("Error fetching cameras:", err);
 			}
@@ -174,11 +156,6 @@ const CameraStream = () => {
 					}
 			}
 	};
-	
-
-		const openSettings = () => {
-			navigate("/changeSettings");
-		};
 
 		useEffect(() => {
 			// Cleanup when navigating away
@@ -189,30 +166,29 @@ const CameraStream = () => {
 			};
 	}, [stream]);
 
+		console.log(cameraId);
+
     return (
 							<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 									{/* Control Buttons */}
 									<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 											{cameraOn ? (
-											<>
-													<button onClick={toggleCamera} className="control-button" style={{ marginRight: '10px' }}>
-															Turn Off Camera
-													</button>
-													<button onClick={fetchCameras2} className="control-button" style={{ marginRight: '10px' }}>
-															Add Another Camera
-													</button>
-											</>
+											<button 
+													onClick={() => {
+															toggleCamera(); 
+															setShowButton(true);
+															setShowCameraStream(false);
+													}} 
+													className="control-button" 
+													style={{ marginRight: '10px' }}
+											>
+													Turn Off Camera
+											</button>
 											) : (
 											<button onClick={fetchCameras} className="control-button" style={{ marginRight: '10px' }}>
 													{cameraOn ? "Turn Off Camera" : "Choose Camera"}
 											</button>
 											)}
-											<button onClick={openSettings} className="control-button" style={{ marginRight: '10px' }}>
-													{"Settings"}
-											</button>
-											<button onClick={openSettings} className="control-button">
-													{"Dashboard"}
-											</button>
 									</div>
 
 									{/* Modal displaying camera data in a table */}
@@ -347,144 +323,6 @@ const CameraStream = () => {
 										</Modal>
 									)}
 
-
-									{/* Modal displaying camera data in a table */}
-									{(
-
-										
-										<Modal
-										isOpen={isModalOpen}
-										onRequestClose={closeModal}
-										contentLabel="Select Camera"
-										className={styles.modalContent}
-										overlayClassName={styles.modalOverlay}
-										>
-										<h2>Select Camera</h2>
-
-										{/* Check if there are cameras available */}
-										{cameras.length === 0 ? (
-											<p>No cameras available. Please add a camera first.</p>
-										) : (
-											<table
-												style={{
-													width: '100%',
-													borderCollapse: 'collapse',
-													marginTop: '10px',
-													boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-												}}
-											>
-												<thead
-													style={{
-														backgroundColor: '#f4f4f4',
-														color: '#333',
-														fontWeight: 'bold',
-													}}
-												>
-													<tr>
-														<th
-															style={{
-																padding: '10px',
-																borderBottom: '2px solid #ddd',
-																textAlign: 'left',
-															}}
-														>
-															Camera ID
-														</th>
-														<th
-															style={{
-																padding: '10px',
-																borderBottom: '2px solid #ddd',
-																textAlign: 'left',
-															}}
-														>
-															Camera Name
-														</th>
-														<th
-															style={{
-																padding: '10px',
-																borderBottom: '2px solid #ddd',
-																textAlign: 'left',
-															}}
-														>
-															Location
-														</th>
-													</tr>
-												</thead>
-												<tbody>
-													{cameras.map((camera) => (
-														<tr
-															key={camera.camera_id}
-															onClick={() => toggleCamera(camera)}
-															style={{
-																cursor: 'pointer',
-																transition: 'background-color 0.3s ease',
-															}}
-															onMouseOver={(e) => {
-																// Change the background color of the entire row
-																e.currentTarget.style.backgroundColor = '#e0f7fa'; // Light blue
-															}}
-															onMouseOut={(e) => {
-																// Reset the background color when mouse leaves
-																e.currentTarget.style.backgroundColor = ''; // Reset to default
-															}}
-														>
-															<td
-																style={{
-																	padding: '8px',
-																	borderBottom: '1px solid #ddd',
-																	fontSize: '14px',
-																}}
-															>
-																{camera.camera_id}
-															</td>
-															<td
-																style={{
-																	padding: '8px',
-																	borderBottom: '1px solid #ddd',
-																	fontSize: '14px',
-																}}
-															>
-																{camera.camera_name}
-															</td>
-															<td
-																style={{
-																	padding: '8px',
-																	borderBottom: '1px solid #ddd',
-																	fontSize: '14px',
-																}}
-															>
-																{camera.location}
-															</td>
-														</tr>
-													))}
-												</tbody>
-											</table>
-										)}
-
-
-
-
-										{/* Close modal button */}
-										<button onClick={closeModal}  
-										style={{
-												backgroundColor: '#d32f2f',
-												color: 'white',
-												border: 'none',
-												borderRadius: '5px',
-												padding: '10px 20px',
-												cursor: 'pointer',
-												fontSize: '16px',
-												transition: 'background-color 0.3s',
-												marginTop: '10px',
-										}}>Close </button>
-										</Modal>
-									)}
-
-
-
-
-
-					
 									{/* Hidden Video Element (Required for Capturing Frames) */}
 									<video 
 										ref={videoRef} 
@@ -523,9 +361,10 @@ const CameraStream = () => {
 											</h1>
 										)}
 									</div>
+
 							</div>
 					);
 	
 };
 
-export default CameraStream;
+export default CameraStream2;
