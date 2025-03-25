@@ -797,6 +797,7 @@ def get_detections_by_company(company_id):
             Detection.detection_type,
             Detection.confidence,
             Detection.detection_datetime,
+            Detection.image_data,
             Users.first_name,  # Fetch username instead of user_id
 						Users.last_name
         )
@@ -814,7 +815,8 @@ def get_detections_by_company(company_id):
             "confidence": detection.confidence,
             "detection_datetime": detection.detection_datetime.strftime('%Y-%m-%d %H:%M:%S') if detection.detection_datetime else None,
             "first_name": detection.first_name, # Return username instead of user_id
-						"last_name": detection.last_name
+						"last_name": detection.last_name,
+            "image_data": base64.b64encode(detection.image_data).decode('utf-8') if detection.image_data else None
         }
         for detection in detections_by_company
     ]
@@ -822,6 +824,32 @@ def get_detections_by_company(company_id):
     # Return the filtered detection list as JSON
     return jsonify({"detections": detection_list})
 
+
+# Get cameras by id
+
+# Route to get cameras by company_id
+@routes_bp.route('/get_cameras/<int:company_id>', methods=['GET'])
+def get_cameras_by_company(company_id):
+    # Query Camera table for cameras with the given company_id
+    cameras_by_company = Camera.query.filter_by(company_id=company_id).all()
+    
+    # Create a list of cameras with their details
+    camera_list = [
+        {
+            "camera_id": camera.camera_id,
+            "company_id": camera.company_id,
+            "camera_name": camera.camera_name,
+            "location": camera.location,
+            "company": {
+                "company_id": camera.company.company_id,
+                "company_name": camera.company.company_name,
+            } if camera.company else None
+        }
+        for camera in cameras_by_company
+    ]
+
+    # Return the filtered camera list as JSON
+    return jsonify({"cameras": camera_list})
 
 
 

@@ -41,7 +41,7 @@ def create_app(config_class=DevelopmentConfig):
     CORS(app)
 
 		# Load the YOLOv11 model
-    model = YOLO("bestV17.pt")
+    model = YOLO("bestV18.pt")
 
 		# Define specific colors for each class
     class_colors = {
@@ -72,6 +72,12 @@ def create_app(config_class=DevelopmentConfig):
                 image_data = data['image'].split(',')[1]  # Remove base64 prefix
                 image_data = base64.b64decode(image_data)
 
+                user_id = data['userId']
+                camera_id = data['cameraId']
+
+                print("USER IDDDDDDDDDDDDDDDDDDDDD:    " + user_id)
+                print(type(user_id))
+
                 # Convert byte data to image
                 nparr = np.frombuffer(image_data, np.uint8)
                 img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -97,7 +103,7 @@ def create_app(config_class=DevelopmentConfig):
                 # Update the frame history with the detection result (True for "NoHelmet", False otherwise)
                 frame_history.append(no_helmet_detected)
 
-                # Initialize no_helmet_count (in case frame_history is less than 10)
+                # Initialise no_helmet_count (in case frame_history is less than 10)
                 no_helmet_count = sum(frame_history)
 
                 # After 10 frames, check the condition
@@ -111,13 +117,13 @@ def create_app(config_class=DevelopmentConfig):
                         print("Make database incident addition")
                         
 												# Get the current camera_id, user_id, and other necessary information
-                        camera_id = 1  # Example: You will need to get this dynamically based on your app
-                        user_id = 6    # Example: You will need to get this dynamically as well
-                        detection_type = "NoHelmet"
+                        camera_id = camera_id
+                        user_id = user_id
+                        detection_type = "No Helmet"
                         detection_confidence = float(confidence)  # Assuming the last confidence from detections
                         
 												# Use a default BLOB (image data) for now
-                        image_data = b"fake_image_data"  # Simple placeholder for image data as BLOB
+                        image_data = image_data  # Simple placeholder for image data as BLOB
                         
                         # Add the detection to the database
                         new_detection = Detection(
@@ -133,6 +139,8 @@ def create_app(config_class=DevelopmentConfig):
                         db.session.commit()
                         # Update the last incident time to the current time
                         last_incident_time = current_time
+												# Clear the queue
+                        frame_history.clear()
                     else:
                         print(f"Cooldown active. Please wait {30 - (current_time - last_incident_time):.1f} more seconds.")
 
@@ -164,7 +172,7 @@ def create_app(config_class=DevelopmentConfig):
                 processed_image_data = base64.b64encode(buffer).decode('utf-8')
 
                 # Emit the processed frame back to the client
-                socketio.emit('frame_processed', {'image': processed_image_data})
+                socketio.emit('frame_processed', {'image': processed_image_data, 'cameraId': camera_id})
 
             else:
                 print("Error: Invalid data structure or missing image data")

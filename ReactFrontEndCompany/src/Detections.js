@@ -95,7 +95,7 @@ const Detections = () => {
 	const data = useMemo(() => detections, [detections]);
 
 	const sortedData = useMemo(() => {
-		return [...data].sort((a, b) => a.detection_id - b.detection_id);
+			return [...data].sort((a, b) => b.detection_id - a.detection_id);
 	}, [data]);
 
   // Example detection data
