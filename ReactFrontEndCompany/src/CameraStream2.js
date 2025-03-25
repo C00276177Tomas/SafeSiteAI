@@ -127,6 +127,7 @@ const CameraStream2 = ({ setShowButton, setShowCameraStream }) => {
 							setCameraLocation(camera.location);
 	
 							// Get available video input devices (cameras)
+							await navigator.mediaDevices.getUserMedia({ video: true });
 							const devices = await navigator.mediaDevices.enumerateDevices();
 							const videoDevices = devices.filter(device => device.kind === "videoinput");
 	
@@ -134,6 +135,7 @@ const CameraStream2 = ({ setShowButton, setShowCameraStream }) => {
 									console.error("No video devices found.");
 									return;
 							}
+
 	
 							// Ask user to select a camera
 							const selectedDeviceId = videoDevices.length > 1 

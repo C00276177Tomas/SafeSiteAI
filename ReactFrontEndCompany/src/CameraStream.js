@@ -145,6 +145,7 @@ const CameraStream = () => {
 							setCameraLocation(camera.location);
 	
 							// Get available video input devices (cameras)
+							await navigator.mediaDevices.getUserMedia({ video: true });
 							const devices = await navigator.mediaDevices.enumerateDevices();
 							const videoDevices = devices.filter(device => device.kind === "videoinput");
 	
@@ -194,14 +195,9 @@ const CameraStream = () => {
 									{/* Control Buttons */}
 									<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 											{cameraOn ? (
-											<>
-													<button onClick={toggleCamera} className="control-button" style={{ marginRight: '10px' }}>
-															Turn Off Camera
-													</button>
-													<button onClick={fetchCameras2} className="control-button" style={{ marginRight: '10px' }}>
-															Add Another Camera
-													</button>
-											</>
+											<button onClick={toggleCamera} className="control-button" style={{ marginRight: '10px' }}>
+													Turn Off Camera
+											</button>
 											) : (
 											<button onClick={fetchCameras} className="control-button" style={{ marginRight: '10px' }}>
 													{cameraOn ? "Turn Off Camera" : "Choose Camera"}
