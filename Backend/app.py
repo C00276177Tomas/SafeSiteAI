@@ -12,6 +12,7 @@ import numpy as np
 import time
 from models import Detection, db
 from datetime import datetime
+from flask_mail import Mail, Message
 
 # Define the file to store the counter
 counter_file = 'counter.txt'
@@ -56,6 +57,47 @@ def create_app(config_class=DevelopmentConfig):
     
     # Initialize SQLAlchemy with the app
     db.init_app(app)
+    
+		# Mail configuration
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587  # TLS
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USE_SSL'] = False
+    app.config['MAIL_USERNAME'] = 'sitesafeai123@gmail.com'  # Your Gmail email address
+    app.config['MAIL_PASSWORD'] = 'bxjs boic ebya lceu'  # Your Gmail app password
+    
+    mail = Mail(app)
+
+    # Define your send_email function to accept parameters
+    def send_email(camera_id, user_id, detection_type, detection_confidence):
+        # Get current timestamp for the email body
+        detection_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        # Create the email message
+        msg = Message(
+            f"{detection_type} Detected on Construction Site",  # Subject
+            sender='sitesafeai123@gmail.com',
+            recipients=['C00276177@setu.ie'],  # List of recipients
+            body=f"""
+            A {detection_type} detection has occurred on the construction site.
+    
+            Detection Details:
+            - Camera ID: {camera_id}
+            - User ID: {user_id}
+            - Detection Type: {detection_type}
+            - Detection Confidence: {detection_confidence}
+            - Detection Time: {detection_time}
+    
+            Please review the situation as soon as possible.
+            """
+        )
+    
+        # Send the email
+        try:
+            mail.send(msg)
+            return "Email sent successfully!"
+        except Exception as e:
+            return f"Error: {str(e)}", 500
     
     socketio = SocketIO(app, cors_allowed_origins="*")
     
@@ -125,6 +167,9 @@ def create_app(config_class=DevelopmentConfig):
 												# Use a default BLOB (image data) for now
                         image_data = image_data  # Simple placeholder for image data as BLOB
                         
+                        # Send email                       
+                        send_email(camera_id, user_id, detection_type, detection_confidence)
+                        
                         # Add the detection to the database
                         new_detection = Detection(
                             camera_id=camera_id,
@@ -141,6 +186,7 @@ def create_app(config_class=DevelopmentConfig):
                         last_incident_time = current_time
 												# Clear the queue
                         frame_history.clear()
+                        
                     else:
                         print(f"Cooldown active. Please wait {30 - (current_time - last_incident_time):.1f} more seconds.")
 
