@@ -206,8 +206,11 @@ const CameraStream = () => {
 											<button onClick={openSettings} className="control-button" style={{ marginRight: '10px' }}>
 													{"Settings"}
 											</button>
-											<button onClick={openSettings} className="control-button">
-													{"Dashboard"}
+											<button 
+													onClick={() => window.open("https://rpubs.com/GloreasBoreas/SiteSafe", "_blank")} 
+													className="control-button"
+											>
+													Dashboard
 											</button>
 									</div>
 
