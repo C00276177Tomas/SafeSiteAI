@@ -330,7 +330,62 @@ export const editCamera = async (cameraId, updatedData) => {
   }
 };
 
+// Checkbox on detection
 
+export const editDetection = async (detectionId, updatedData) => {
+  try {
+    // Destructure to avoid sending detection_id in the update request
+    const { detection_id, ...dataToUpdate } = updatedData; 
+
+    // Ensure only the reviewed field is sent
+    const allowedFields = ['reviewed'];
+    const filteredData = Object.keys(dataToUpdate)
+      .filter((key) => allowedFields.includes(key))
+      .reduce((obj, key) => {
+        obj[key] = dataToUpdate[key];
+        return obj;
+      }, {});
+
+    // Send the PUT request to update the detection
+    const response = await fetch(`${API_URL}/update_detection/${detectionId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(filteredData), // Send the updated data without detection_id
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update detection');
+    }
+
+    const data = await response.json();
+    return data; // Return the response or log the success message
+  } catch (error) {
+    console.error('Error in API call for editing detection:', error);
+    throw error; // Throwing the error so it can be caught in the component
+  }
+};
+
+// Delete detection
+
+export const deleteDetection = async (detectionId) => {
+  try {
+    const response = await fetch(`${API_URL}/delete_detection/${detectionId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete detection');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error in API call for deleting detection:', error);
+    throw error;
+  }
+};
 
 
 // Export other functions like addUser, updateUser, etc., if needed

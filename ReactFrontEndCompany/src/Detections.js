@@ -2,8 +2,9 @@ import { useTable } from 'react-table';
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './ManageUsers.module.css';
-import { fetchDetectionsById } from './Api';
 import Modal from 'react-modal';
+import { fetchDetectionsById, editDetection, deleteDetection} from './Api';
+import deleteIcon from './assets/delete.png'; // Your delete icon path
 
 Modal.setAppElement('#root');
 
@@ -129,6 +130,40 @@ const Detections = () => {
   //   []
   // );
 
+	const handleCheckboxChange = async (rowData) => {
+		try {
+			// Toggle the reviewed value
+			const updatedValue = !rowData.reviewed;
+
+			console.log(rowData.detection_id);
+			console.log(updatedValue);
+	
+			// Call the editDetection API with the updated value
+			await editDetection(rowData.detection_id, { reviewed: updatedValue });
+	
+			// Optionally, fetch updated data if needed
+			const updatedDetections = await fetchDetectionsById(companyId);
+			setDetections(updatedDetections);
+	
+		} catch (error) {
+			alert(`Error updating detection: ${error.message}`);
+		} 
+	};
+
+	const handleDelete = async (detection) => {
+		const isConfirmed = window.confirm(`Are you sure you want to delete detection with ID ${detection.detection_id}?`);
+	
+		if (isConfirmed) {
+			try {
+				await deleteDetection(detection.detection_id);
+				const updatedDetections = await fetchDetectionsById(companyId); // Adjust this to fetch detections
+				setDetections(updatedDetections); // Update the detections state
+			} catch (error) {
+				window.alert(`Error deleting detection: ${error.message}`);
+			}
+		}
+	};
+
   const columns = useMemo(
     () => [
       { Header: 'Detection ID', accessor: 'detection_id' },
@@ -141,6 +176,23 @@ const Detections = () => {
 				accessor: d => `${d.first_name} ${d.last_name}` 
 			},
 			{
+				Header: 'Reviewed',
+				accessor: 'reviewed',
+				Cell: ({ row }) => (
+					<input
+						type="checkbox"
+						checked={row.original.reviewed}
+						onChange={() => handleCheckboxChange(row.original)}
+						style={{
+							width: '30px',
+							height: '30px',
+							accentColor: row.original.reviewed ? 'green' : 'red',
+							cursor: 'pointer'
+						}}
+					/>
+				)
+			},
+			{
         Header: 'Image',
         accessor: 'image_data',
         Cell: ({ value }) => (
@@ -149,6 +201,18 @@ const Detections = () => {
             alt="Detection"
             style={{ width: '50px', height: '50px', cursor: 'pointer' }}
             onClick={() => openImageModal(value)}
+          />
+        ),
+      },
+			{
+        Header: 'Delete',
+        accessor: 'delete',
+        Cell: ({ row }) => (
+          <img
+            src={deleteIcon}
+            alt="Delete user"
+            className={styles.icon}
+            onClick={() => handleDelete(row.original)}
           />
         ),
       },
