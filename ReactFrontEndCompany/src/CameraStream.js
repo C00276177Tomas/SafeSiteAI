@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
-import {fetchCamerasByCompany } from './Api';
+import {fetchCamerasByCompany, fetchSettingsById } from './Api';
 import Modal from 'react-modal';
 import styles from './ManageUsers.module.css';
 
@@ -34,6 +34,24 @@ const CameraStream = () => {
 
 		const [cameraId, setCameraId] = useState(null);
 		const [cameraLocation, setCameraLocation] = useState(null);
+
+		const [email, setEmail] = useState("");
+		const [autoEmail, setAutoEmail] = useState(false);
+		const [sensitivity, setSensitivity] = useState(50);
+
+		useEffect(() => {
+				const fetchSettings = async () => {
+					try {
+						const settings = await fetchSettingsById(companyId);
+						setAutoEmail(settings.onoff_email || false);
+						setEmail(settings.notification_email || "");
+						setSensitivity(settings.confidence_threshold || 50);
+					} catch (error) {
+						console.error("Error fetching settings:", error);
+					}
+				};
+				fetchSettings();
+			}, []);
 
 
 		const openModal = () => {
@@ -81,7 +99,7 @@ const CameraStream = () => {
         context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
         
         const imageData = canvasRef.current.toDataURL("image/jpeg");
-        socket.emit("send_frame", { image: imageData, userId: userId, cameraId: cameraId  }); // Send frame to backend
+        socket.emit("send_frame", { image: imageData, userId: userId, cameraId: cameraId, email: email, autoEmail: autoEmail, sensitivity: sensitivity  }); // Send frame to backend
     };
 
     useEffect(() => {

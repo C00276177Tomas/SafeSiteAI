@@ -387,6 +387,50 @@ export const deleteDetection = async (detectionId) => {
   }
 };
 
+// Update Setting
+
+export const updateSettings = async (settingsId, updatedData) => {
+  try {
+    // Destructure to remove settings_id if present in the updatedData
+    const { settings_id, ...dataToUpdate } = updatedData;
+
+    // Only allow editable fields
+    const allowedFields = [
+      'confidence_threshold',
+      'onoff_email',
+      'onoff_sms',
+      'notification_email',
+      'notification_sms'
+    ];
+
+    const filteredData = Object.keys(dataToUpdate)
+      .filter((key) => allowedFields.includes(key))
+      .reduce((obj, key) => {
+        obj[key] = dataToUpdate[key];
+        return obj;
+      }, {});
+
+    // Send the PUT request to update settings
+    const response = await fetch(`${API_URL}/update_settings/${settingsId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(filteredData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update settings');
+    }
+
+    const data = await response.json();
+    return data; // You can handle this in your component
+  } catch (error) {
+    console.error('Error in API call for updating settings:', error);
+    throw error;
+  }
+};
+
 
 // Export other functions like addUser, updateUser, etc., if needed
 // export const addUser = async (user) => {

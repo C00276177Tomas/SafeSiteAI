@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Outlet, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import './App.css';
-import faceshot from './images/faceshot.jpg'; // Import the image
 import githubLogo from './images/github.png';
 import linkedInLogo from './images/linkedIn.png';
 import siteSafeLogo from './images/SiteSafeLogo.png';
-import NoHelmet from './images/1NoHelmet.jpg';
 import { fetchUserName } from "./Api";
 import CameraStream from "./CameraStream";
 import CameraStream2 from "./CameraStream2";
@@ -221,45 +219,6 @@ const Main = () => {
 			<div class="fixed-image">
 					<img src={siteSafeLogo} alt="Site Safe Logo" />
 			</div>
-
-			{/*Right-side controls
-			<div className="right-controls">
-					<button className="control-button">Turn Camera On/Off</button>
-					<button className="control-button">Set Automatic Email/Phone</button>
-
-				
-					<div className="toggle-container">
-							<p className="toggle-text">Email Notification</p>
-							<label className="toggle-label">
-									<input type="checkbox" className="toggle-input" />
-									<span className="toggle-slider"></span>
-							</label>
-					</div>
-
-					
-					<div className="toggle-container">
-							<p className="toggle-text">SMS Notification</p>
-							<label className="toggle-label">
-									<input type="checkbox" className="toggle-input" />
-									<span className="toggle-slider"></span>
-							</label>
-					</div>
-
-					
-					<div className="slider-container">
-							<label htmlFor="detection-sensitivity" className="slider-label">Detection Sensitivity</label>
-							<input
-									type="range"
-									id="detection-sensitivity"
-									className="slider-input"
-									min="0"
-									max="100"
-									step="1"
-							/>
-					</div>
-					<button className="control-button" style={{ marginTop: '20px' }}>Open Dashboard</button>
-					<button className="control-button" style={{ marginTop: '1400px' }}>Add User</button>
-			</div> */}
 
 			<section className="main-section">
 				<section id="profile" className="profile-section">
