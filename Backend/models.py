@@ -70,6 +70,7 @@ class Detection(db.Model):
     detection_datetime = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
     confidence = db.Column(db.Float)
     image_data = db.Column(db.LargeBinary)  # Storing image as BLOB
+    reviewed = db.Column(db.Boolean, default=False)
     
     # Relationships with Camera and Users
     camera = db.relationship('Camera', backref='detections_reference')

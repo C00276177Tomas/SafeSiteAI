@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <ul class="nav-links">
+                <li><a href="#top">Home</a></li>
+                <li><a href="#desc">Description</a></li>
+                <li><a href="#documentation">Documentation</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="fixed-image">
+            <img src="images/SiteSafeLogo.png" alt="Site Safe Logo" />
+        </div>
+
+        <section id="profile" class="profile-section">
+						<div class="profile-content">
+								<h1>SiteSafeAI</h1>
+								<h2>Enhanced Construction Site Safety Leveraging AI</h2>
+								<p class="intro-text"><strong>Revolutionising</strong> worksite safety with <strong>AI detection</strong>.</p>
+								<p class="intro-text">Ensuring <strong>helmet compliance</strong> with our advanced system.</p>
+								<p class="intro-text">Experience the <strong>future</strong> of automated safety monitoring.</p>
+								<p class="intro-text">Discover how SiteSafeAI <strong>protects</strong> your team.</p>
+						</div>
+				</section>
+
+            <section id="desc">
+                <h2>Project Summary</h2>
+                <p>This project aims to enhance safety and compliance on construction sites by using AI to monitor workers and ensure they are wearing essential safety gear, such as helmets and high-visibility jackets, at all times. The system leverages real-time video feeds, which are processed by an object detection model based on YOLO (You Only Look Once), a high-performance deep learning model for image recognition and object detection.</p>
+                <p>The solution is designed to automatically detect personnel within the camera’s view, assess whether they are equipped with the required safety attire, and alert supervisors if any safety violations are detected. By integrating OpenCV for live video processing, Flask for backend web infrastructure, and React for the user interface, the system provides a seamless and user-friendly experience.</p>
+                <h3>Features:</h3>
+                <ul>
+                    <li><strong>Real-Time Detection:</strong> Continuously monitors video streams to detect workers and assess safety compliance.</li>
+                    <li><strong>Automated Alerts:</strong> Utilises SMTP to send email alerts to designated safety personnel when safety violations are identified.</li>
+                    <li><strong>Data Logging and Reporting:</strong> Logs incidents and generates reports, using SQLite, to provide insights on compliance patterns and areas for safety improvement.</li>
+                    <li><strong>Scalability:</strong> Deployed on cloud platforms (e.g., Google Colab) for high processing power, allowing for scaling and multi-camera support.</li>
+                </ul>
+                <h3>Technologies:</h3>
+                <ul>
+                    <li><strong>Machine Learning/AI:</strong> YOLOv11 , Ultralytics</li>
+                    <li><strong>Video Processing:</strong> OpenCV</li>
+                    <li><strong>Web Framework:</strong> Flask (backend), React (frontend)</li>
+                    <li><strong>Database:</strong> SQLite</li>
+                    <li><strong>Alerts:</strong> SMTP for email notifications</li>
+                </ul>
+                <p>This AI-powered monitoring system offers a proactive approach to safety, reducing human error and ensuring compliance with safety regulations, ultimately helping to create a safer construction environment.</p>
+            </section>
+
+            <section id="documentation">
+                <h2>Documentation</h2>
+                <div class="button-container">
+                    <button onclick="window.location.href='path/to/specifications.pdf'" download="Specifications.pdf">
+                        <img src="path/to/specifications-icon.png" alt="Specifications Icon" />
+                        Download Specifications
+                    </button>
+                    <button onclick="window.location.href='path/to/poster.pdf'" download="Poster.pdf">
+                        <img src="path/to/poster-icon.png" alt="Poster Icon" />
+                        Download Poster
+                    </button>
+                    <button onclick="window.location.href='path/to/design.pdf'" download="Design.pdf">
+                        <img src="path/to/design-icon.png" alt="Design Icon" />
+                        Download Design
+                    </button>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <footer>
+        <section id="contact">
+            <p>Contact Information:</p>
+            <p>Email: <a href="mailto:tomassmitas@yahoo.com">tomassmitas@yahoo.com</a></p>
+            <p>Phone: 083 358 8363</p>
+            <div class="social-media-linear">
+                <a href="https://github.com/C00276177Tomas" target="_blank" rel="noopener noreferrer">
+                    <img src="images/github.png" alt="GitHub" class="social-logo-linear" />
+                </a>
+                <a href="https://www.linkedin.com/in/tomas-smitas-a43aa2104/" target="_blank" rel="noopener noreferrer">
+                    <img src="images/linkedIn.png" alt="LinkedIn" class="social-logo-linear" />
+                </a>
+            </div>
+        </section>
+    </footer>
+</body>
+</html>

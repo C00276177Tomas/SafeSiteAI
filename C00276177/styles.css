@@ -1,0 +1,155 @@
+body {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	line-height: 1.6;
+}
+
+.container {
+	margin: 0 auto;
+	padding: 10px 200px 10px 200px; /* Added left padding for margin */
+	box-sizing: border-box;
+	position: relative; /* Needed for absolute positioning of fixed image */
+}
+
+header, footer {
+	background-color: #3498db; /* Blue background */
+	color: white;
+	padding: 10px 0;
+	text-align: center;
+}
+
+.navbar ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.navbar li {
+	display: inline;
+	margin: 0 15px;
+}
+
+.navbar a {
+	color: white;
+	text-decoration: none;
+}
+
+.main-section {
+	margin-top: 20px;
+}
+
+.profile-section {
+	text-align: center;
+	padding: 50px 20px;
+	background-color: #f0f0f0;
+}
+
+.profile-content h1 {
+	margin-bottom: 10px;
+}
+
+#desc, #documentation, #contact {
+	margin-bottom: 30px;
+}
+
+.button-container {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+}
+
+button {
+	padding: 10px 20px;
+	background-color: #e0e0e0;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+button img {
+	height: 20px;
+}
+
+footer p {
+	margin: 5px 0;
+}
+
+.social-media-linear {
+	margin-top: 10px;
+}
+
+.social-logo-linear {
+	height: 30px;
+	margin: 0 10px;
+}
+
+.fixed-image {
+	position: fixed; /* Fixed positioning */
+	left: 20px; /* Position from left */
+	top: 80px; /* Position 100px from the top */
+	max-width: 150px; /* Adjust size as needed */
+	height: auto; /* Allow image to scale proportionally */
+}
+
+.fixed-image img {
+	max-width: 100%;
+	height: auto;
+}
+
+#profile.profile-section {
+	text-align: center;
+	padding: 10px 10px; /* Increased padding */
+	background: linear-gradient(135deg, #2980b9, #6dd5fa); /* Cool gradient background */
+	color: white; /* White text for contrast */
+	font-family: 'Arial Black', Gadget, sans-serif; /* Bold, impactful font */
+}
+
+#profile.profile-section h1 {
+	font-size: 3em; /* Larger headline */
+	margin-bottom: 30px;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+}
+
+.intro-text {
+	font-size: 1.8em; /* Larger paragraph text */
+	margin: 20px 0;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
+	animation: fadeIn 1s ease-in-out forwards; /* Fade-in animation */
+	opacity: 0; /* Initially hidden */
+}
+
+.intro-text:nth-child(3) {
+	animation-delay: 0.5s; /* Delay for the third paragraph */
+}
+
+.intro-text:nth-child(4) {
+	animation-delay: 1s; /* Delay for the fourth paragraph */
+}
+
+.intro-text:nth-child(5) {
+	animation-delay: 1.5s; /* Delay for the fifth paragraph */
+}
+
+.intro-text:nth-child(6) {
+	animation-delay: 2s; /* Delay for the fifth paragraph */
+}
+
+strong {
+	color: #ffd700; /* Gold color for emphasis */
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+}
+
+@keyframes fadeIn {
+	from {
+			opacity: 0;
+			transform: translateY(20px); /* Move text up initially */
+	}
+	to {
+			opacity: 1;
+			transform: translateY(0);
+	}
+}

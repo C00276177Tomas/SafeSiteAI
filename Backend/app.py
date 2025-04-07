@@ -31,6 +31,7 @@ def save_counter(counter):
         
 # Initialize global frame history to store results across frames
 frame_history = deque(maxlen=10)
+frame_history_confidence = deque(maxlen=10)
 
 # Initialize a global variable to track the last incident addition time
 last_incident_time = 0
@@ -55,7 +56,6 @@ def create_app(config_class=DevelopmentConfig):
     # Apply configuration
     app.config.from_object(config_class)
     
-    # Initialize SQLAlchemy with the app
     db.init_app(app)
     
 		# Mail configuration
@@ -63,41 +63,43 @@ def create_app(config_class=DevelopmentConfig):
     app.config['MAIL_PORT'] = 587  # TLS
     app.config['MAIL_USE_TLS'] = True
     app.config['MAIL_USE_SSL'] = False
-    app.config['MAIL_USERNAME'] = 'sitesafeai123@gmail.com'  # Your Gmail email address
-    app.config['MAIL_PASSWORD'] = 'bxjs boic ebya lceu'  # Your Gmail app password
+    app.config['MAIL_USERNAME'] = 'sitesafeai123@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'bxjs boic ebya lceu'
     
     mail = Mail(app)
 
-    # Define your send_email function to accept parameters
-    def send_email(camera_id, user_id, detection_type, detection_confidence):
-        # Get current timestamp for the email body
-        detection_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        
-        # Create the email message
-        msg = Message(
-            f"{detection_type} Detected on Construction Site",  # Subject
-            sender='sitesafeai123@gmail.com',
-            recipients=['C00276177@setu.ie'],  # List of recipients
-            body=f"""
-            A {detection_type} detection has occurred on the construction site.
-    
-            Detection Details:
-            - Camera ID: {camera_id}
-            - User ID: {user_id}
-            - Detection Type: {detection_type}
-            - Detection Confidence: {detection_confidence}
-            - Detection Time: {detection_time}
-    
-            Please review the situation as soon as possible.
-            """
-        )
-    
-        # Send the email
-        try:
-            mail.send(msg)
-            return "Email sent successfully!"
-        except Exception as e:
-            return f"Error: {str(e)}", 500
+    def send_email(camera_id, user_id, detection_type, detection_confidence, recipients_email):
+      from datetime import datetime
+  
+      # Get current timestamp for the email body
+      detection_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+      
+      # Create the email message
+      msg = Message(
+          subject=f"{detection_type} Detected on Construction Site",
+          sender='sitesafeai123@gmail.com',
+          recipients=[recipients_email],  # Use the passed-in recipients list
+          body=f"""
+          A {detection_type} detection has occurred on the construction site.
+  
+          Detection Details:
+          - Camera ID: {camera_id}
+          - User ID: {user_id}
+          - Detection Type: {detection_type}
+          - Detection Confidence: {detection_confidence}
+          - Detection Time: {detection_time}
+  
+          Please review the situation as soon as possible.
+          """
+      )
+      
+      # Send the email
+      try:
+          mail.send(msg)
+          return "Email sent successfully!"
+      except Exception as e:
+          return f"Error: {str(e)}", 500
+
     
     socketio = SocketIO(app, cors_allowed_origins="*")
     
@@ -116,6 +118,9 @@ def create_app(config_class=DevelopmentConfig):
 
                 user_id = data['userId']
                 camera_id = data['cameraId']
+                email = data['email']
+                autoEmail = data['autoEmail']
+                sensitivity = data['sensitivity']
 
                 print("USER IDDDDDDDDDDDDDDDDDDDDD:    " + user_id)
                 print(type(user_id))
@@ -138,12 +143,13 @@ def create_app(config_class=DevelopmentConfig):
                     class_name = model.names[int(class_id)]  # Map class_id to class name
 
                     # Check if it's the "NoHelmet" class
-                    if class_name == "noHelmet":
+                    if class_name == "noHelmet" and confidence > sensitivity:
                         no_helmet_detected = True
                         break  # Exit loop once "NoHelmet" is found in this frame
 
                 # Update the frame history with the detection result (True for "NoHelmet", False otherwise)
                 frame_history.append(no_helmet_detected)
+                frame_history_confidence.append(confidence)
 
                 # Initialise no_helmet_count (in case frame_history is less than 10)
                 no_helmet_count = sum(frame_history)
@@ -162,13 +168,19 @@ def create_app(config_class=DevelopmentConfig):
                         camera_id = camera_id
                         user_id = user_id
                         detection_type = "No Helmet"
-                        detection_confidence = float(confidence)  # Assuming the last confidence from detections
+                        detection_confidence = float(sum(frame_history_confidence)) / len(frame_history_confidence) 
                         
 												# Use a default BLOB (image data) for now
                         image_data = image_data  # Simple placeholder for image data as BLOB
                         
-                        # Send email                       
-                        send_email(camera_id, user_id, detection_type, detection_confidence)
+                        # Send email    
+                        print("Send Email")
+                        print("Camera ID:" + str(camera_id))      
+                        print("user_id:" + str(user_id))  
+                        print("detection_type:" + detection_type)   
+                        print("detection_confidence:" + str(detection_confidence))   
+                        if (autoEmail):
+                          send_email(camera_id, user_id, detection_type, detection_confidence, email)
                         
                         # Add the detection to the database
                         new_detection = Detection(
@@ -186,6 +198,7 @@ def create_app(config_class=DevelopmentConfig):
                         last_incident_time = current_time
 												# Clear the queue
                         frame_history.clear()
+                        frame_history_confidence.clear()
                         
                     else:
                         print(f"Cooldown active. Please wait {30 - (current_time - last_incident_time):.1f} more seconds.")
@@ -201,7 +214,7 @@ def create_app(config_class=DevelopmentConfig):
                 for detection in detections:
                     x1, y1, x2, y2, confidence, cls = detection
                     confidence = float(confidence)
-                    if confidence > 0.6:
+                    if confidence > sensitivity:
                         x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
                         class_id = int(cls)
                         class_name = model.names[class_id]
@@ -233,124 +246,3 @@ def create_app(config_class=DevelopmentConfig):
 if __name__ == '__main__':
     app, socketio = create_app()  # Get both app and socketio
     socketio.run(app, debug=True)  # Run the app with SocketIO
-    
-# from flask import Flask
-# from flask_cors import CORS
-# from db import db  # Import db from db.py
-# from routes import routes_bp  # Import routes blueprint
-# from config import DevelopmentConfig, TestingConfig
-
-# def create_app(config_class=DevelopmentConfig):
-#     # Initialize Flask app
-#     app = Flask(__name__)
-#     CORS(app)
-    
-#     # Apply configuration
-#     app.config.from_object(config_class)
-    
-#     # Initialize SQLAlchemy with the app
-#     db.init_app(app)
-    
-#     # Register blueprint for routes
-#     app.register_blueprint(routes_bp)
-    
-#     return app
-
-# if __name__ == '__main__':
-#     app = create_app()
-#     app.run()
-
-
-
-
-
-
-# from flask import Flask
-# from flask_cors import CORS
-# from flask_socketio import SocketIO  # Import SocketIO
-# from db import db  # Import db from db.py
-# from routes import routes_bp  # Import routes blueprint
-# from config import DevelopmentConfig, TestingConfig
-# from ultralytics import YOLO
-# import base64
-# import cv2
-# import numpy as np
-
-# def create_app(config_class=DevelopmentConfig):
-#     # Initialize Flask app
-#     app = Flask(__name__)
-#     CORS(app)
-
-# 		# Load the YOLOv11 model
-#     model = YOLO("bestV17.pt")
-
-# 		# Define specific colors for each class
-#     class_colors = {
-# 				"person": (255, 0, 0),  # Blue
-# 				"helmet": (0, 255, 0),  # Green
-# 				"noHelmet": (0, 0, 255),  # Red
-# 				"vest": (0, 255, 255)  # Yellow
-# 		}
-    
-#     # Apply configuration
-#     app.config.from_object(config_class)
-    
-#     # Initialize SQLAlchemy with the app
-#     db.init_app(app)
-    
-#     socketio = SocketIO(app, cors_allowed_origins="*")
-    
-#     @socketio.on('send_frame')
-#     def handle_send_frame(data):
-#         try:
-#             print('Received frame:', data)
-
-#             if isinstance(data, dict) and 'image' in data:
-#                 image_data = data['image'].split(',')[1]  # Remove base64 prefix
-#                 image_data = base64.b64decode(image_data)
-
-#                 # Convert byte data to image
-#                 nparr = np.frombuffer(image_data, np.uint8)
-#                 img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-#                 # Run YOLO detection
-#                 results = model(img)  # Run YOLO on the image
-#                 detections = results[0].boxes.data  # Get bounding box data
-
-#                 # Draw bounding boxes on the image
-#                 for detection in detections:
-#                     x1, y1, x2, y2, confidence, cls = detection
-#                     confidence = float(confidence)
-#                     if confidence > 0.6:
-#                         x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-#                         class_id = int(cls)
-#                         class_name = model.names[class_id]
-                        
-#                         color = class_colors.get(class_name, (255, 255, 255))  # Default to white if class not found
-
-#                         # Draw the bounding box
-#                         cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
-#                         label = f"{class_name} {confidence:.2f}"
-#                         cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-
-#                 # Encode the processed image to base64
-#                 _, buffer = cv2.imencode('.jpg', img)
-#                 processed_image_data = base64.b64encode(buffer).decode('utf-8')
-
-#                 # Emit the processed frame back to the client
-#                 print("frame_processed")
-#                 socketio.emit('frame_processed', {'image': processed_image_data})
-
-#             else:
-#                 print("Error: Invalid data structure or missing image data")
-#                 socketio.emit('frame_processed', {'error': 'Invalid data structure or missing image data'})
-
-#         except Exception as e:
-#             print(f"Error processing frame: {e}")
-#             socketio.emit('frame_processed', {'error': str(e)})
-
-#     return app, socketio  # Return both app and socketio
-
-# if __name__ == '__main__':
-#     app, socketio = create_app()  # Get both app and socketio
-#     socketio.run(app, debug=True)  # Run the app with SocketIO

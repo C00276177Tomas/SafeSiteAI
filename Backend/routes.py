@@ -502,7 +502,8 @@ def get_detections():
             "detection_type": detection.detection_type,
             "detection_datetime": detection.detection_datetime,
             "confidence": detection.confidence,
-            "image_data": detection.image_data.hex() if detection.image_data else None  # Convert binary to hex string
+            "image_data": detection.image_data.hex() if detection.image_data else None,  # Convert binary to hex string
+            "reviewed": detection.reviewed
         }
         for detection in all_detections
     ]
@@ -575,6 +576,8 @@ def update_detection(detection_id):
             detection.confidence = data['confidence']
         if 'image_data' in data:
             detection.image_data = bytes.fromhex(data['image_data'])
+        if 'reviewed' in data:
+            detection.reviewed = data['reviewed']
 
         db.session.commit()
 
@@ -798,6 +801,7 @@ def get_detections_by_company(company_id):
             Detection.confidence,
             Detection.detection_datetime,
             Detection.image_data,
+            Detection.reviewed,
             Users.first_name,  # Fetch username instead of user_id
 						Users.last_name
         )
@@ -816,7 +820,8 @@ def get_detections_by_company(company_id):
             "detection_datetime": detection.detection_datetime.strftime('%Y-%m-%d %H:%M:%S') if detection.detection_datetime else None,
             "first_name": detection.first_name, # Return username instead of user_id
 						"last_name": detection.last_name,
-            "image_data": base64.b64encode(detection.image_data).decode('utf-8') if detection.image_data else None
+            "image_data": base64.b64encode(detection.image_data).decode('utf-8') if detection.image_data else None,
+            "reviewed": detection.reviewed
         }
         for detection in detections_by_company
     ]
