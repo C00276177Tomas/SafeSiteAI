@@ -128,25 +128,6 @@ const CameraStream = () => {
 			}
 		};
 
-		const fetchCameras2 = async () => {
-			try {
-				const camerasData = await fetchCamerasByCompany(companyId);
-				setCameras(camerasData);
-				console.log(cameras);
-	
-				if (camerasData.length === 0) {
-					alert("A camera needs to be added first.");
-					return;
-				}
-	
-				// Show the modal if there are cameras available
-				setIsModalOpen2(true);
-				setShowModal2(true);
-			} catch (err) {
-				console.error("Error fetching cameras:", err);
-			}
-		};
-
 		const toggleCamera = async (camera) => {
 			if (cameraOn) {
 					// Stop the video stream
@@ -157,40 +138,49 @@ const CameraStream = () => {
 					setCameraOn(false);
 					setProcessedFrame(null);
 			} else {
-					try {
-							setIsModalOpen(false);
-							setCameraId(camera.camera_id);
-							setCameraLocation(camera.location);
-	
-							// Get available video input devices (cameras)
-							await navigator.mediaDevices.getUserMedia({ video: true });
-							const devices = await navigator.mediaDevices.enumerateDevices();
-							const videoDevices = devices.filter(device => device.kind === "videoinput");
-	
-							if (videoDevices.length === 0) {
-									console.error("No video devices found.");
-									return;
-							}
-	
-							// Ask user to select a camera
-							const selectedDeviceId = videoDevices.length > 1 
-									? prompt(`Select a camera (0 - ${videoDevices.length - 1}):\n` +
-													 videoDevices.map((d, i) => `${i}: ${d.label}`).join("\n"))
-									: videoDevices[0].deviceId;
-	
-							if (!selectedDeviceId) return;
-	
-							// Start the selected camera stream
-							const newStream = await navigator.mediaDevices.getUserMedia({ 
-									video: { deviceId: { exact: videoDevices[selectedDeviceId].deviceId } } 
-							});
-	
-							if (videoRef.current) videoRef.current.srcObject = newStream;
-							setStream(newStream);
-							setCameraOn(true);
-					} catch (err) {
-							console.error("Error accessing camera:", err);
+				try {
+					setIsModalOpen(false);
+					setCameraId(camera.camera_id);
+					setCameraLocation(camera.location);
+				
+					// Ask for camera permission early to ensure labels are available
+					await navigator.mediaDevices.getUserMedia({ video: true });
+					const devices = await navigator.mediaDevices.enumerateDevices();
+					const videoDevices = devices.filter(device => device.kind === "videoinput");
+				
+					if (videoDevices.length === 0) {
+						console.error("No video devices found.");
+						return;
 					}
+				
+					let selectedDeviceId;
+				
+					if (videoDevices.length === 1) {
+						// Only one camera, use it directly
+						selectedDeviceId = videoDevices[0].deviceId;
+					} else {
+						// Ask user to pick one
+						const selectedIndex = prompt(
+							`Select a camera (0 - ${videoDevices.length - 1}):\n` +
+							videoDevices.map((d, i) => `${i}: ${d.label}`).join("\n")
+						);
+				
+						if (selectedIndex === null || isNaN(selectedIndex)) return;
+				
+						selectedDeviceId = videoDevices[Number(selectedIndex)].deviceId;
+					}
+				
+					// Start the selected camera stream
+					const newStream = await navigator.mediaDevices.getUserMedia({
+						video: { deviceId: { exact: selectedDeviceId } }
+					});
+				
+					if (videoRef.current) videoRef.current.srcObject = newStream;
+					setStream(newStream);
+					setCameraOn(true);
+				} catch (err) {
+					console.error("Error accessing camera:", err);
+				}
 			}
 	};
 	
