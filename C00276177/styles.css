@@ -13,10 +13,22 @@ body {
 }
 
 header, footer {
-	background-color: #3498db; /* Blue background */
+	background-color: #007bff; /* Blue background */
 	color: white;
 	padding: 10px 0;
 	text-align: center;
+}
+
+.navbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background-color: #007bff; /* Ensures background covers content behind it */
+	z-index: 999; /* Keeps it on top of other elements */
+	padding: 10px 0;
+	text-align: center;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional subtle shadow */
 }
 
 .navbar ul {
@@ -41,15 +53,36 @@ header, footer {
 
 .profile-section {
 	text-align: center;
-	padding: 50px 20px;
+	padding: 10 10;
 	background-color: #f0f0f0;
+}
+
+#profile.profile-section {
+	margin-top: 50px;
 }
 
 .profile-content h1 {
 	margin-bottom: 10px;
 }
 
-#desc, #documentation, #contact {
+#desc {
+  margin-bottom: 30px;
+  text-align: center;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#desc ul,
+#documentation ul,
+#contact ul {
+  text-align: left;
+  display: inline-block;
+  margin: 0 auto;
+  padding-left: 20px; /* Adds indentation for bullets */
+}
+
+#documentation, #contact {
 	margin-bottom: 30px;
 }
 
@@ -102,54 +135,54 @@ footer p {
 
 #profile.profile-section {
 	text-align: center;
-	padding: 10px 10px; /* Increased padding */
-	background: linear-gradient(135deg, #2980b9, #6dd5fa); /* Cool gradient background */
-	color: white; /* White text for contrast */
-	font-family: 'Arial Black', Gadget, sans-serif; /* Bold, impactful font */
+	padding: 20px 20px;
+	background: linear-gradient(
+		to right,
+		#ffffff 0%,
+		#5aa8fb 30%,
+		#2f7cd9 50%,
+		#5aa8fb 70%,
+		#ffffff 100%
+	);
+	color: #ffffff;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#profile.profile-section h1 {
-	font-size: 3em; /* Larger headline */
-	margin-bottom: 30px;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+#profile.profile-section h1,
+#profile.profile-section h2 {
+	font-size: 1.8rem;
+	margin-top: 0px;
+	font-weight: 400;
+	color: #e0f7ff;
 }
 
 .intro-text {
-	font-size: 1.8em; /* Larger paragraph text */
-	margin: 20px 0;
-	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
-	animation: fadeIn 1s ease-in-out forwards; /* Fade-in animation */
-	opacity: 0; /* Initially hidden */
+	font-size: 1.2rem;
+	margin: 15px auto;
+	max-width: 700px;
+	line-height: 1.6;
+	opacity: 0;
+	animation: fadeIn 1s ease-in-out forwards;
 }
 
-.intro-text:nth-child(3) {
-	animation-delay: 0.5s; /* Delay for the third paragraph */
-}
-
-.intro-text:nth-child(4) {
-	animation-delay: 1s; /* Delay for the fourth paragraph */
-}
-
-.intro-text:nth-child(5) {
-	animation-delay: 1.5s; /* Delay for the fifth paragraph */
-}
-
-.intro-text:nth-child(6) {
-	animation-delay: 2s; /* Delay for the fifth paragraph */
-}
+.intro-text:nth-of-type(1) { animation-delay: 0.3s; }
+.intro-text:nth-of-type(2) { animation-delay: 0.6s; }
+.intro-text:nth-of-type(3) { animation-delay: 0.9s; }
+.intro-text:nth-of-type(4) { animation-delay: 1.2s; }
 
 strong {
-	color: #ffd700; /* Gold color for emphasis */
-	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+	color: #1a4f85; /* Professional deep blue */
+	font-weight: 600;
+	text-shadow: none;
 }
 
 @keyframes fadeIn {
 	from {
-			opacity: 0;
-			transform: translateY(20px); /* Move text up initially */
+		opacity: 0;
+		transform: translateY(20px);
 	}
 	to {
-			opacity: 1;
-			transform: translateY(0);
+		opacity: 1;
+		transform: translateY(0);
 	}
 }
