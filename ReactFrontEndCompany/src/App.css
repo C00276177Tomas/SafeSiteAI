@@ -464,3 +464,18 @@ h2::after {
 .dropdown-menu button:hover {
 	background-color: #6C3483;
 }
+
+.spec-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.specs-icon {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 8px; /* changed from margin-right */
+}

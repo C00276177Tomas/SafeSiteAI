@@ -1,12 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from "react-router-dom";
 import './App.css';
-import githubLogo from './images/github.png';
-import linkedInLogo from './images/linkedIn.png';
-import siteSafeLogo from './images/SiteSafeLogo.png';
 import { fetchUserName } from "./Api";
 import CameraStream from "./CameraStream";
 import CameraStream2 from "./CameraStream2";
+
+import githubLogo from './images/github.png';
+import linkedInLogo from './images/linkedIn.png';
+import siteSafeLogo from './images/SiteSafeLogo.png';
+import specsIcon from './images/specs.png';
+
+import designPdf from './docs/SiteSafeDesignC00276177.pdf';
+import posterPdf from './docs/SiteSafeAiPoster.pdf';
+import specsPdf from './docs/SiteSafeSpecsIteration0.pdf';
+
+
 
 const Main = () => {
 
@@ -304,19 +312,24 @@ const Main = () => {
 						<h2>Documentation</h2>
 						
 						<div className="button-container">
-								<button onClick={() => window.location.href='path/to/specifications.pdf'} download="Specifications.pdf">
-										<img src="path/to/specifications-icon.png" alt="Specifications Icon" />
-										Download Specifications
+								<button onClick={() => window.open(specsPdf, '_blank')} className="spec-button">
+									<img src={specsIcon} alt="Specifications Icon" className="specs-icon" />
+									View Specifications
 								</button>
 								
-								<button onClick={() => window.location.href='path/to/poster.pdf'} download="Poster.pdf">
-										<img src="path/to/poster-icon.png" alt="Poster Icon" />
-										Download Poster
+								<button onClick={() => window.open(posterPdf, '_blank')} className="spec-button">
+									<img src={specsIcon} alt="Poster Icon" className="specs-icon" />
+									View Poster
 								</button>
-								
-								<button onClick={() => window.location.href='path/to/design.pdf'} download="Design.pdf">
-										<img src="path/to/design-icon.png" alt="Design Icon" />
-										Download Design
+
+								<button onClick={() => window.open(designPdf, '_blank')} className="spec-button">
+									<img src={specsIcon} alt="Design Icon" className="specs-icon" />
+									View Design
+								</button>
+
+								<button onClick={() => window.location.href='path/to/report.pdf'} className="spec-button">
+									<img src={specsIcon} alt="Report Icon" className="specs-icon" />
+									View Report
 								</button>
 						</div>
 				</section>
