@@ -37,6 +37,8 @@ const CameraStream = () => {
 		const [autoEmail, setAutoEmail] = useState(false);
 		const [sensitivity, setSensitivity] = useState(50);
 
+		const [isAdmin, setIsAdmin] = useState(false);
+
 		useEffect(() => {
 				const fetchSettings = async () => {
 					try {
@@ -49,6 +51,19 @@ const CameraStream = () => {
 					}
 				};
 				fetchSettings();
+			}, []);
+
+		useEffect(() => {
+				// Retrieve the value from localStorage and parse it to a boolean
+				const role = localStorage.getItem('role');
+				console.log(role);
+				
+				// If the value exists and is 'true', set isAdmin to true, otherwise false
+				if (role === 'admin') {
+					setIsAdmin(true);
+				} else {
+					setIsAdmin(false);
+				}
 			}, []);
 
 
@@ -199,9 +214,11 @@ const CameraStream = () => {
 													{cameraOn ? "Turn Off Camera" : "Choose Camera"}
 											</button>
 											)}
-											<button onClick={openSettings} className="control-button" style={{ marginRight: '10px' }}>
-													{"Settings"}
-											</button>
+											{isAdmin && (
+												<button onClick={openSettings} className="control-button" style={{ marginRight: '10px' }}>
+													Settings
+												</button>
+											)}
 											<button 
 													onClick={() => window.open("https://rpubs.com/GloreasBoreas/SiteSafe", "_blank")} 
 													className="control-button"
