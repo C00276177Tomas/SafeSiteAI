@@ -268,16 +268,22 @@ const Main = () => {
 				</section>
         <section id="desc">
 					<h2>Project Summary</h2>
-          <p>This project aims to enhance safety and compliance on construction sites by using AI to monitor workers and ensure they are wearing essential safety gear, such as helmets and high-visibility jackets, at all times. The system leverages real-time video feeds, which are processed by an object detection model based on YOLO (You Only Look Once), a high-performance deep learning model for image recognition and object detection.</p>
+          <p>This project aims to enhance safety and compliance on construction sites by using AI to monitor workers and ensure they are 
+						wearing essential safety gear, such as helmets at all times. The system leverages real-time video feeds, which are processed 
+						by an object detection model based on YOLO (You Only Look Once), a high-performance deep learning model for image recognition
+						 and object detection.</p>
 						
-					<p>The solution is designed to automatically detect personnel within the camera’s view, assess whether they are equipped with the required safety attire, and alert supervisors if any safety violations are detected. By integrating OpenCV for live video processing, Flask for backend web infrastructure, and React for the user interface, the system provides a seamless and user-friendly experience.</p>
+					<p>The solution is designed to automatically detect personnel within the camera’s view, assess whether they are equipped with the
+						 required safety attire, and alert supervisors if any safety violations are detected. By integrating OpenCV for live video 
+						 processing, Flask for backend web infrastructure, and React for the user interface, the system provides a seamless and 
+						 user-friendly experience.</p>
 
 					<h3>Features:</h3>
 					<ul>
 							<li><strong>Real-Time Detection:</strong> Continuously monitors video streams to detect workers and assess safety compliance.</li><br></br>
 							<li><strong>Automated Alerts:</strong> Utilises SMTP to send email alerts to designated safety personnel when safety violations are identified.</li><br></br>
-							<li><strong>Data Logging and Reporting:</strong> Logs incidents and generates reports, using SQLite, to provide insights on compliance patterns and areas for safety improvement.</li><br></br>
-							<li><strong>Scalability:</strong> Deployed on cloud platforms (e.g., Google Colab) for high processing power, allowing for scaling and multi-camera support.</li>
+							<li><strong>Data Logging and Reporting:</strong> Logs incidents and generates reports, using MySQL, to provide insights on compliance patterns and areas for safety improvement.</li><br></br>
+							<li><strong>Scalability:</strong> Future deployed to a cloud platform (e.g., Google Colab) for high processing power, allowing for scaling and multi-camera support.</li>
 					</ul>
 
 					<h3>Technologies:</h3>
@@ -285,11 +291,12 @@ const Main = () => {
 							<li><strong>Machine Learning/AI:</strong> YOLOv11 , Ultralytics</li><br></br>
 							<li><strong>Video Processing:</strong> OpenCV</li><br></br>
 							<li><strong>Web Framework:</strong> Flask (backend), React (frontend)</li><br></br>
-							<li><strong>Database:</strong> SQLite</li><br></br>
+							<li><strong>Database:</strong> MySQL</li><br></br>
 							<li><strong>Alerts:</strong> SMTP for email notifications</li>
 					</ul>
 
-					<p>This AI-powered monitoring system offers a proactive approach to safety, reducing human error and ensuring compliance with safety regulations, ultimately helping to create a safer construction environment.</p>
+					<p>This AI-powered monitoring system offers a proactive approach to safety, reducing human error and ensuring compliance with safety 
+						regulations, ultimately helping to create a safer construction environment.</p>
 
         </section>
 
