@@ -80,15 +80,12 @@ const Detections = () => {
 				
 				setDetections(Array.isArray(detectionData) ? detectionData : []);
 
-				console.log("Detections");
-				console.log(detectionData);
 			} catch (error) {
 				setError(`Failed to load users: ${error.message}`);
 			}
 		};
 
 		if (companyId) {
-			console.log(companyId);
 			fetchData();
 		}
 	}, [companyId]);
@@ -134,9 +131,6 @@ const Detections = () => {
 		try {
 			// Toggle the reviewed value
 			const updatedValue = !rowData.reviewed;
-
-			console.log(rowData.detection_id);
-			console.log(updatedValue);
 	
 			// Call the editDetection API with the updated value
 			await editDetection(rowData.detection_id, { reviewed: updatedValue });

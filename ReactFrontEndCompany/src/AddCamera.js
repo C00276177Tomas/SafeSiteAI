@@ -32,8 +32,6 @@ const AddCamera = () => {
         location,
       };
 
-      console.log(camera);
-
       await addCamera(camera); // Call API to add camera
       setLoading(false); // Hide loader after success
       navigate("/manageCameras"); // Navigate to the camera management page after success

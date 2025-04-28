@@ -45,12 +45,9 @@ const Register = () => {
         password_hash: password, // Ensure hashing if needed before sending
     };
 
-    console.log("Registering with data:", companyData);
-
     // Call API to create company
     createCompany(companyData)
 				.then((response) => {
-						console.log("Company created successfully:", response);
 						
 						// Show success alert with company name
 						alert(`Company "${companyName}" has been created successfully!`);

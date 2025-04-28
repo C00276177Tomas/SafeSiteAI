@@ -56,7 +56,6 @@ const CameraStream = () => {
 		useEffect(() => {
 				// Retrieve the value from localStorage and parse it to a boolean
 				const role = localStorage.getItem('role');
-				console.log(role);
 				
 				// If the value exists and is 'true', set isAdmin to true, otherwise false
 				if (role === 'admin') {
@@ -68,12 +67,10 @@ const CameraStream = () => {
 
 
 		const openModal = () => {
-			console.log('Opening Modal');
 			setIsModalOpen(true);
 		};
 	
 		const closeModal = () => {
-			console.log('Closing Modal');
 			setIsModalOpen(false);
 		};
 
@@ -116,7 +113,6 @@ const CameraStream = () => {
 			try {
 				const camerasData = await fetchCamerasByCompany(companyId);
 				setCameras(camerasData);
-				console.log(cameras);
 	
 				if (camerasData.length === 0) {
 					alert("A camera needs to be added first.");

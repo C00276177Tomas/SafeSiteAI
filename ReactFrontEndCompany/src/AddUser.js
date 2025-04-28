@@ -65,8 +65,6 @@ const AddUser = () => {
         role: isAdmin ? "admin" : "normal",
       };
 
-      console.log(user);
-
       await addUser(user); // Call API to add user
       setLoading(false); // Hide loader after success
       navigate("/manageUsers"); // Navigate to the table view after success

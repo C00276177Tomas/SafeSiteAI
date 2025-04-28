@@ -29,9 +29,7 @@ const CameraStream2 = ({ setShowButton, setShowCameraStream }) => {
 		});
 		const [cameras, setCameras] = useState([]);
 		const [showModal, setShowModal] = useState(false);
-		const [showModal2, setShowModal2] = useState(false);
 		const [isModalOpen, setIsModalOpen] = useState(false);
-		const [isModalOpen2, setIsModalOpen2] = useState(false);
 
 		const [cameraId, setCameraId] = useState(null);
 		const [cameraLocation, setCameraLocation] = useState(null);
@@ -56,23 +54,11 @@ const CameraStream2 = ({ setShowButton, setShowCameraStream }) => {
 
 
 		const openModal = () => {
-			console.log('Opening Modal');
 			setIsModalOpen(true);
 		};
 	
 		const closeModal = () => {
-			console.log('Closing Modal');
 			setIsModalOpen(false);
-		};
-
-		const openModal2 = () => {
-			console.log('Opening Modal 2');
-			setIsModalOpen2(true);
-		};
-	
-		const closeModal2 = () => {
-			console.log('Closing Modal 2');
-			setIsModalOpen2(false);
 		};
 
 		const navigate = useNavigate();
@@ -114,7 +100,6 @@ const CameraStream2 = ({ setShowButton, setShowCameraStream }) => {
 			try {
 				const camerasData = await fetchCamerasByCompany(companyId);
 				setCameras(camerasData);
-				console.log(cameras);
 	
 				if (camerasData.length === 0) {
 					alert("A camera needs to be added first.");
@@ -185,8 +170,6 @@ const CameraStream2 = ({ setShowButton, setShowCameraStream }) => {
 					}
 			};
 	}, [stream]);
-
-		console.log(cameraId);
 
     return (
 							<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
