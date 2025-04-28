@@ -1,0 +1,23 @@
+var NAVTREEINDEX0 =
+{
+"_add_camera_8js.html":[0,0,0,0],
+"_add_user_8js.html":[0,0,0,1],
+"_admin_route_8js.html":[0,0,0,2],
+"_api_8js.html":[0,0,0,3],
+"_app_8js.html":[0,0,0,4],
+"_camera_stream2_8js.html":[0,0,0,6],
+"_camera_stream_8js.html":[0,0,0,5],
+"_change_settings_8js.html":[0,0,0,7],
+"_detections_8js.html":[0,0,0,8],
+"_login_8js.html":[0,0,0,10],
+"_main_8js.html":[0,0,0,11],
+"_manage_cameras_8js.html":[0,0,0,12],
+"_manage_users_8js.html":[0,0,0,13],
+"_private_route_8js.html":[0,0,0,14],
+"_register_8js.html":[0,0,0,15],
+"dir_68267d1309a1af8e8297ef4c3efbcdba.html":[0,0,0],
+"files.html":[0,0],
+"index.html":[],
+"index_8js.html":[0,0,0,9],
+"pages.html":[]
+};
