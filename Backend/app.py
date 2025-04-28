@@ -122,9 +122,6 @@ def create_app(config_class=DevelopmentConfig):
                 autoEmail = data['autoEmail']
                 sensitivity = data['sensitivity']
 
-                print("USER IDDDDDDDDDDDDDDDDDDDDD:    " + user_id)
-                print(type(user_id))
-
                 # Convert byte data to image
                 nparr = np.frombuffer(image_data, np.uint8)
                 img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -134,6 +131,7 @@ def create_app(config_class=DevelopmentConfig):
 
                 # Initialize a flag to track if "NoHelmet" is detected
                 no_helmet_detected = False
+                confidence = 0
 
                 # Loop through each detection and check if "NoHelmet" is detected
                 for detection in detections:
@@ -146,6 +144,9 @@ def create_app(config_class=DevelopmentConfig):
                     if class_name == "noHelmet" and confidence > sensitivity:
                         no_helmet_detected = True
                         break  # Exit loop once "NoHelmet" is found in this frame
+                    
+                
+                  
 
                 # Update the frame history with the detection result (True for "NoHelmet", False otherwise)
                 frame_history.append(no_helmet_detected)
@@ -179,8 +180,8 @@ def create_app(config_class=DevelopmentConfig):
                         print("user_id:" + str(user_id))  
                         print("detection_type:" + detection_type)   
                         print("detection_confidence:" + str(detection_confidence))   
-                        if (autoEmail):
-                          send_email(camera_id, user_id, detection_type, detection_confidence, email)
+                        #if (autoEmail):
+                          #send_email(camera_id, user_id, detection_type, detection_confidence, email)
                         
                         # Add the detection to the database
                         new_detection = Detection(
