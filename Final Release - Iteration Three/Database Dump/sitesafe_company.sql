@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `sitesafe` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `sitesafe`;
 -- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
 --
 -- Host: localhost    Database: sitesafe
@@ -16,26 +18,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `settings`
+-- Table structure for table `company`
 --
 
-DROP TABLE IF EXISTS `settings`;
+DROP TABLE IF EXISTS `company`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `settings` (
-  `settings_id` int NOT NULL AUTO_INCREMENT,
-  `company_id` int NOT NULL,
-  `confidence_threshold` float DEFAULT NULL,
-  `onoff_email` tinyint(1) DEFAULT NULL,
-  `onoff_sms` tinyint(1) DEFAULT NULL,
-  `notification_email` varchar(255) DEFAULT NULL,
-  `notification_sms` varchar(255) DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`settings_id`),
-  UNIQUE KEY `company_id` (`company_id`),
-  CONSTRAINT `settings_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `company` (`company_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `company` (
+  `company_id` int NOT NULL AUTO_INCREMENT,
+  `company_name` varchar(100) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`company_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `company`
+--
+
+LOCK TABLES `company` WRITE;
+/*!40000 ALTER TABLE `company` DISABLE KEYS */;
+INSERT INTO `company` VALUES (1,'Company A','2025-01-10 21:01:39'),(2,'Company B','2025-01-10 21:01:39'),(6,'TechCorp','2025-01-12 18:45:17'),(7,'Comapny C','2025-01-27 15:43:42'),(8,'CompanyCreate Test1','2025-01-28 15:01:09'),(9,'CompanyCreate Test2','2025-01-28 15:05:11'),(10,'Tesla','2025-02-13 21:43:50'),(11,'Create','2025-02-13 21:52:17'),(12,'Test','2025-02-14 12:13:28'),(13,'testtest','2025-02-14 12:19:11'),(14,'test4','2025-02-14 12:24:54'),(15,'test9','2025-02-14 12:29:24');
+/*!40000 ALTER TABLE `company` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -46,4 +51,4 @@ CREATE TABLE `settings` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-14 11:51:25
+-- Dump completed on 2025-04-28 13:33:55
