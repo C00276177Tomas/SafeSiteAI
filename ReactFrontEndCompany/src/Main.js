@@ -13,8 +13,7 @@ import specsIcon from './images/specs.png';
 import designPdf from './docs/SiteSafeDesignC00276177.pdf';
 import posterPdf from './docs/SiteSafeAiPoster.pdf';
 import specsPdf from './docs/SiteSafeSpecsIteration0.pdf';
-
-
+import reportPdf from './docs/SiteSafeReport.pdf';
 
 const Main = () => {
 
@@ -326,7 +325,7 @@ const Main = () => {
 									View Design
 								</button>
 
-								<button onClick={() => window.location.href='path/to/report.pdf'} className="spec-button">
+								<button onClick={() => window.open(reportPdf, '_blank')} className="spec-button">
 									<img src={specsIcon} alt="Report Icon" className="specs-icon" />
 									View Report
 								</button>

@@ -34,6 +34,15 @@
 								</div>
 						</section>
 
+						<section id="desc">
+							<h2>Video Demonstration</h2>
+							
+							<video style="width: 100%; height: auto;" controls>
+								<source src="FinalVideoDemo.mp4" type="video/mp4">
+								Your browser does not support the video tag.
+							</video>
+						</section>
+
             <section id="desc">
                 <h2>Project Summary</h2>
                 <p>This project aims to enhance safety and compliance on construction sites by using AI to monitor workers and ensure they are wearing essential safety gear, such as helmets and high-visibility jackets, at all times. The system leverages real-time video feeds, which are processed by an object detection model based on YOLO (You Only Look Once), a high-performance deep learning model for image recognition and object detection.</p>
@@ -59,20 +68,27 @@
 
             <section id="documentation">
                 <h2>Documentation</h2>
-                <div class="button-container">
-                    <button onclick="window.location.href='path/to/specifications.pdf'" download="Specifications.pdf">
-                        <img src="images/docs.jpeg" alt="Specifications Icon" />
-                        Download Specifications
-                    </button>
-                    <button onclick="window.location.href='path/to/poster.pdf'" download="Poster.pdf">
-                        <img src="images/docs.jpeg" alt="Poster Icon" />
-                        Download Poster
-                    </button>
-                    <button onclick="window.location.href='path/to/design.pdf'" download="Design.pdf">
-                        <img src="images/docs.jpeg" alt="Design Icon" />
-                        Download Design
-                    </button>
-                </div>
+								<div class="button-container">
+									<button class="spec-button" onclick="window.open('SiteSafeSpecsIteration0.pdf', '_blank')">
+										<img src="images/docs.jpeg" alt="Specifications Icon" class="specs-icon" />
+										View Specifications
+									</button>
+								
+									<button class="spec-button" onclick="window.open('SiteSafeAiPoster.pdf', '_blank')">
+										<img src="images/docs.jpeg" alt="Poster Icon" class="specs-icon" />
+										View Poster
+									</button>
+								
+									<button class="spec-button" onclick="window.open('SiteSafeDesignC00276177.pdf', '_blank')">
+										<img src="images/docs.jpeg" alt="Design Icon" class="specs-icon" />
+										View Design
+									</button>
+								
+									<button class="spec-button" onclick="window.open('SiteSafeReport.pdf', '_blank')">
+										<img src="images/docs.jpeg" alt="Report Icon" class="specs-icon" />
+										View Report
+									</button>
+								</div>
             </section>
         </section>
     </main>

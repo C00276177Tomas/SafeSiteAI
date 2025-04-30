@@ -186,3 +186,34 @@ strong {
 		transform: translateY(0);
 	}
 }
+
+.button-container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 15px;
+	justify-content: center;
+	margin-top: 20px;
+}
+
+.spec-button {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 16px;
+	font-size: 14px;
+	cursor: pointer;
+	border: 1px solid #ccc;
+	background-color: #f5f5f5;
+	border-radius: 6px;
+	transition: background-color 0.3s;
+}
+
+.spec-button:hover {
+	background-color: #e0e0e0;
+}
+
+.specs-icon {
+	width: 20px;
+	height: 20px;
+}
